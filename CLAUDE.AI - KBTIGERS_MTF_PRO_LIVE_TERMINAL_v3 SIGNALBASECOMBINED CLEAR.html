@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="mr" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>KBTIGERS MTF Pro Terminal v4</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightweight-charts/4.1.3/lightweight-charts.standalone.production.js" onerror="var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js';document.head.appendChild(s);"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: { extend: {
+      fontFamily: { sans: ['Inter','sans-serif'], mono: ['JetBrains Mono','monospace'] },
+      colors: { binance: { gold:'#F0B90B', goldHover:'#FCD535', darkBg:'#0B0E11', cardBg:'#181A20', cardBorder:'#2B313A', green:'#0ECB81', red:'#F6465D', neutral:'#F0B90B', muted:'#848E9C' } }
+    } }
+  }
+</script>
+<style>
+body { background-color:#0B0E11; color:#EAECEF; font-family:'Inter',sans-serif; -webkit-tap-highlight-color:transparent; overflow-x:hidden; transition:background-color .6s; }
+::-webkit-scrollbar { width:5px; height:5px; }
+::-webkit-scrollbar-track { background:#111418; }
+::-webkit-scrollbar-thumb { background:#2B313A; border-radius:4px; }
+::-webkit-scrollbar-thumb:hover { background:#F0B90B; }
+@keyframes flashGreen { 0% { background-color:rgba(14,203,129,.35); border-color:#0ECB81; } 100% { background-color:transparent; } }
+@keyframes flashRed { 0% { background-color:rgba(246,70,93,.35); border-color:#F6465D; } 100% { background-color:transparent; } }
+.flash-up { animation:flashGreen .8s ease-out; }
+.flash-down { animation:flashRed .8s ease-out; }
+.glass-card { background:rgba(24,26,32,.85); backdrop-filter:blur(10px); border:1px solid rgba(43,49,58,.8); }
+@keyframes pulseGlow { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:.6; transform:scale(1.05); } }
+.pulse-live { animation:pulseGlow 2s infinite ease-in-out; }
+.font-mono, input, select, table {
+  font-family: 'Inter', sans-serif !important;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1, "zero" 0;
+  letter-spacing: 0.01em;
+}
+</style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-binance-gold selection:text-black pb-16 md:pb-6">
+
+<!-- PASSWORD GATE -->
+<div id="pwGate" style="position:fixed;inset:0;z-index:100;background:#0B0E11;display:flex;align-items:center;justify-content:center;padding:1rem;">
+  <div style="width:100%;max-width:340px;background:#181A20;border:1px solid #2B313A;border-radius:16px;padding:24px;">
+    <div style="text-align:center;margin-bottom:16px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-weight:800;color:#fff;letter-spacing:1px;">KBTIGERS <span style="color:#F0B90B;">MTF PRO</span></div>
+      <div style="font-size:12px;color:#848E9C;margin-top:4px;">Password टाका</div>
+    </div>
+    <input id="pwInput" type="password" placeholder="Password" autocomplete="current-password"
+      style="width:100%;background:#181A20;border:1px solid #2B313A;border-radius:8px;padding:10px;color:#fff;font-family:'JetBrains Mono',monospace;font-size:14px;outline:none;">
+    <button id="pwBtn" style="width:100%;margin-top:12px;background:#F0B90B;color:#000;font-weight:800;border:none;border-radius:8px;padding:10px;font-size:14px;cursor:pointer;">उघडा (UNLOCK)</button>
+    <div id="pwMsg" style="text-align:center;font-size:12px;color:#F6465D;margin-top:10px;min-height:16px;"></div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header class="relative bg-binance-darkBg border-b border-binance-cardBorder px-3 py-2.5 sm:px-6">
+  <div class="max-w-7xl mx-auto flex items-center justify-between gap-2">
+    <div class="flex items-center gap-2.5">
+      <div class="w-9 h-9 rounded-xl bg-binance-gold/10 border border-binance-gold/30 flex items-center justify-center">
+        <svg class="w-6 h-6 text-binance-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div>
+        <div class="flex items-center gap-1.5">
+          <h1 class="text-base sm:text-lg font-black tracking-wider text-white font-mono uppercase">KBTIGERS <span class="text-binance-gold">MTF PRO</span></h1>
+          <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-extrabold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 pulse-live"></span> LIVE v4</span>
+        </div>
+        <p class="text-[10px] text-binance-muted -mt-0.5 hidden sm:block">Weighted MTF Signal • Entry / SL / Target Engine</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-1.5 sm:gap-2">
+      <button id="sndToggleBtn" title="Toggle Sound" class="p-2 rounded-lg bg-binance-cardBg border border-binance-cardBorder text-binance-muted hover:text-white transition">
+        <svg id="sndIconOn" class="w-4 h-4 text-binance-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M18.364 5.636a9 9 0 010 12.728M11 5L6 9H2v6h4l5 4V5z"/></svg>
+        <svg id="sndIconOff" class="w-4 h-4 hidden text-binance-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" stroke-dasharray="2 2"/></svg>
+      </button>
+      <button id="wkToggleBtn" title="Keep Screen Awake" class="p-2 rounded-lg bg-binance-cardBg border border-binance-cardBorder text-binance-gold transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+      </button>
+      <button id="settingsBtn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-binance-gold/10 hover:bg-binance-gold/20 text-binance-gold border border-binance-gold/30 text-xs font-bold transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+        <span class="hidden sm:inline">सेटिंग्ज</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-2.5 sm:px-6 py-3 space-y-3.5 flex-1 w-full">
+
+  <!-- WATCHLIST -->
+  <div class="space-y-1.5">
+    <div class="flex items-center justify-between px-1">
+      <span class="text-[11px] font-bold uppercase text-binance-muted tracking-wider">Quick Watchlist</span>
+      <span class="text-[10px] text-gray-500">1-Tap Select</span>
+    </div>
+    <div id="chips" class="flex items-center gap-1.5 overflow-x-auto pb-1.5 text-xs"></div>
+  </div>
+
+  <!-- CONTROL PANEL -->
+  <div class="glass-card p-3 sm:p-4 rounded-xl space-y-3">
+    <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-3">
+      <div><label class="block text-[11px] font-semibold text-binance-muted mb-1">Symbol</label>
+        <input id="sym" type="text" value="BTC" class="w-full bg-binance-cardBg border border-binance-cardBorder focus:border-binance-gold text-white font-mono font-bold text-sm rounded-lg p-2.5 outline-none uppercase"></div>
+      <div><label class="block text-[11px] font-semibold text-binance-muted mb-1">Quote Pair</label>
+        <input id="quote" type="text" value="USDT" class="w-full bg-binance-cardBg border border-binance-cardBorder focus:border-binance-gold text-white font-mono font-bold text-sm rounded-lg p-2.5 outline-none uppercase"></div>
+      <div><label class="block text-[11px] font-semibold text-binance-muted mb-1">Runs (0=∞)</label>
+        <input id="rep" type="number" min="0" value="0" class="w-full bg-binance-cardBg border border-binance-cardBorder focus:border-binance-gold text-white font-mono font-bold text-sm rounded-lg p-2.5 outline-none"></div>
+      <div><label class="block text-[11px] font-semibold text-binance-muted mb-1">Interval (सेकंद)</label>
+        <input id="cyc" type="number" min="5" value="15" class="w-full bg-binance-cardBg border border-binance-cardBorder focus:border-binance-gold text-white font-mono font-bold text-sm rounded-lg p-2.5 outline-none"></div>
+      <div class="col-span-2 sm:col-span-1 flex items-end">
+        <button id="add" class="w-full h-[42px] bg-binance-cardBorder hover:bg-binance-cardBorder/80 text-white font-bold text-xs rounded-lg border border-gray-600/40">+ Chip जोडा</button>
+      </div>
+    </div>
+    <div class="grid grid-cols-3 gap-2 pt-1">
+      <button id="go" class="col-span-2 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-black font-extrabold text-sm sm:text-base py-3 px-4 rounded-xl active:scale-95 transition flex items-center justify-center gap-2">
+        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><span>स्कॅन सुरू करा (START)</span></button>
+      <button id="stop" class="bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-rose-400 text-white font-extrabold text-sm sm:text-base py-3 px-4 rounded-xl active:scale-95 transition flex items-center justify-center gap-1.5">
+        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M6 6h12v12H6z"/></svg><span>थांबवा</span></button>
+    </div>
+    <div id="status" class="text-xs font-mono font-medium text-binance-gold bg-binance-gold/5 border border-binance-gold/20 rounded-lg px-3 py-2 text-center">Symbol टाका आणि START बटण दाबा.</div>
+  </div>
+
+  <!-- STICKY BAR -->
+  <div id="stickyBar" class="sticky top-0 z-40 -mx-2.5 sm:-mx-6 px-2.5 sm:px-6 py-2 space-y-2 bg-binance-darkBg border-b border-binance-cardBorder shadow-lg">
+    <div id="ltpBox" class="glass-card rounded-2xl p-3 sm:p-4 transition-all duration-300 relative overflow-hidden">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <div class="flex items-center gap-2">
+            <span id="ltpSym" class="text-xs sm:text-sm font-bold tracking-wider text-binance-muted uppercase font-mono">--</span>
+            <span id="marketBadge" class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-binance-cardBorder text-gray-300">--</span>
+          </div>
+          <div id="ltp" class="text-3xl sm:text-5xl font-black font-mono text-binance-gold tracking-tight my-1">--</div>
+        </div>
+        <div class="grid grid-cols-3 gap-2 sm:gap-4 bg-binance-cardBg/60 p-2.5 sm:p-3 rounded-xl border border-binance-cardBorder/60">
+          <div><div class="text-[10px] text-binance-muted uppercase font-semibold">24H CHANGE</div><div id="ltpChange" class="text-xs sm:text-sm font-extrabold font-mono text-gray-300">--</div></div>
+          <div><div class="text-[10px] text-binance-muted uppercase font-semibold">24H %</div><div id="ltpChangePct" class="text-xs sm:text-sm font-extrabold font-mono text-gray-300">--</div></div>
+          <div><div class="text-[10px] text-binance-muted uppercase font-semibold">24H VOL</div><div id="ltpVol" class="text-xs sm:text-sm font-extrabold font-mono text-binance-gold">--</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FINAL SIGNAL -->
+    <div id="verdictBanner" class="hidden glass-card rounded-xl p-2.5 sm:p-3 border-l-4" style="border-left-color:#F0B90B">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="text-[10px] font-black text-binance-muted uppercase tracking-wider">FINAL</span>
+          <span id="fvText" class="text-xl sm:text-3xl font-black font-mono px-2.5 py-0.5 rounded-lg uppercase">WAIT</span>
+          <span id="fvScore" class="text-[11px] font-extrabold font-mono px-1.5 py-0.5 rounded bg-binance-cardBg text-gray-200 border border-binance-cardBorder">Score --</span>
+          <span id="fvConfirm" class="hidden"></span>
+        </div>
+        <div class="flex items-center gap-1 text-[10px] font-mono flex-wrap">
+          <span class="text-binance-muted">OLD</span>
+          <span id="ovText" class="px-1.5 py-0.5 rounded font-extrabold">--</span>
+          <span id="ovConf" class="text-gray-400">--</span>
+          <span class="text-binance-muted ml-2">NEW</span>
+          <span id="nvText" class="px-1.5 py-0.5 rounded font-extrabold">--</span>
+          <span id="nvConf" class="text-gray-400">--</span>
+        </div>
+      </div>
+      <div class="mt-2 h-2 bg-binance-cardBg rounded-full relative overflow-hidden border border-binance-cardBorder">
+        <div class="absolute top-0 bottom-0 w-px bg-gray-500" style="left:50%"></div>
+        <div id="fvBar" class="absolute top-0 bottom-0 transition-all duration-500" style="left:50%;width:0"></div>
+      </div>
+      <div class="flex justify-between text-[9px] font-mono text-binance-muted mt-0.5"><span>-100 SELL</span><span>0</span><span>BUY +100</span></div>
+    </div>
+  </div>
+
+  <!-- TRADE PLAN -->
+  <div id="planCard" class="hidden glass-card rounded-xl p-3 sm:p-4 space-y-3">
+    <div class="flex items-center justify-between gap-2 flex-wrap border-b border-binance-cardBorder pb-2">
+      <h3 class="text-sm font-extrabold text-binance-gold">🎯 Trade Plan (Entry · Stop Loss · Target)</h3>
+      <div class="flex items-center gap-1.5 text-xs">
+        <span class="text-binance-muted">Trade TF</span>
+        <select id="ttfSel" class="bg-binance-cardBg border border-binance-cardBorder rounded-lg px-2 py-1 text-white font-mono font-bold outline-none">
+          <option value="15m">15m (Scalp)</option>
+          <option value="1h" selected>1h (Intraday)</option>
+          <option value="4h">4h (Swing)</option>
+        </select>
+      </div>
+    </div>
+    <div id="planBody"></div>
+    <div id="planNotes" class="text-[11px] text-gray-300 space-y-0.5 leading-snug"></div>
+  </div>
+
+  <!-- TABS -->
+  <div class="space-y-3">
+    <div class="flex border-b border-binance-cardBorder text-xs sm:text-sm font-bold gap-2 overflow-x-auto">
+      <button id="tabMtfBtn" class="tab-btn px-4 py-2.5 text-binance-gold border-b-2 border-binance-gold font-extrabold whitespace-nowrap">📊 MTF Signal Matrix</button>
+      <button id="tabChartsBtn" class="tab-btn px-4 py-2.5 text-binance-muted hover:text-white font-medium whitespace-nowrap">📈 Live Charts</button>
+      <button id="tabObBtn" class="tab-btn px-4 py-2.5 text-binance-muted hover:text-white font-medium whitespace-nowrap">📚 Order Book</button>
+      <button id="tabCalcBtn" class="tab-btn px-4 py-2.5 text-binance-muted hover:text-white font-medium whitespace-nowrap">🧮 Risk Calc</button>
+      <button id="tabLogBtn" class="tab-btn px-4 py-2.5 text-binance-muted hover:text-white font-medium whitespace-nowrap">📜 Signal Log</button>
+    </div>
+
+    <div id="tabMtf" class="tab-content space-y-3">
+      <div id="out" class="space-y-3"><div class="glass-card p-8 text-center text-binance-muted rounded-xl text-xs sm:text-sm">तपासणी सुरू करण्यासाठी 'स्कॅन सुरू करा' वर क्लिक करा.</div></div>
+    </div>
+
+    <div id="tabCharts" class="tab-content hidden space-y-3">
+      <div class="glass-card p-3 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+        <div class="flex items-center gap-2"><span id="chartSym" class="font-extrabold text-binance-gold">--</span><span id="chartMsg" class="text-binance-muted">आधी 'स्कॅन सुरू करा' दाबा.</span></div>
+        <div id="chartLegend" class="flex items-center gap-3"></div>
+      </div>
+      <div id="chartGrid" class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+        <div class="glass-card p-8 text-center text-binance-muted rounded-xl text-xs sm:text-sm lg:col-span-2">चार्ट्स लोड करण्यासाठी 'स्कॅन सुरू करा' वर क्लिक करा.</div>
+      </div>
+    </div>
+
+    <div id="tabOb" class="tab-content hidden space-y-3">
+      <div class="glass-card p-4 rounded-xl space-y-4">
+        <h3 class="text-sm font-bold text-binance-gold">📚 Bid vs Ask Sentiment Depth</h3>
+        <div id="obVisualBox"><div class="text-center text-xs text-binance-muted py-6">ऑर्डर बुक डेटा लोड करण्यासाठी स्कॅन चालू करा.</div></div>
+      </div>
+    </div>
+
+    <div id="tabCalc" class="tab-content hidden space-y-3">
+      <div class="glass-card p-4 sm:p-5 rounded-xl space-y-4 max-w-xl mx-auto">
+        <h3 class="text-sm font-extrabold text-binance-gold border-b border-binance-cardBorder pb-2">🧮 Pro Position Size Calculator</h3>
+        <div class="grid grid-cols-2 gap-3 text-xs">
+          <div><label class="text-binance-muted block mb-1">Capital ($)</label><input id="calcCap" type="number" value="1000" class="w-full bg-binance-cardBg border border-binance-cardBorder rounded-lg p-2 text-white font-mono font-bold"></div>
+          <div><label class="text-binance-muted block mb-1">Risk per Trade (%)</label><input id="calcRiskPct" type="number" value="1" step="0.5" class="w-full bg-binance-cardBg border border-binance-cardBorder rounded-lg p-2 text-white font-mono font-bold"></div>
+          <div><label class="text-binance-muted block mb-1">Entry Price ($)</label><input id="calcEntry" type="number" placeholder="Eg. 65000" class="w-full bg-binance-cardBg border border-binance-cardBorder rounded-lg p-2 text-white font-mono font-bold"></div>
+          <div><label class="text-binance-muted block mb-1">Stop Loss ($)</label><input id="calcSl" type="number" placeholder="Eg. 64000" class="w-full bg-binance-cardBg border border-binance-cardBorder rounded-lg p-2 text-white font-mono font-bold"></div>
+        </div>
+        <button id="calcComputeBtn" class="w-full bg-binance-gold text-black font-extrabold py-2.5 rounded-lg text-xs uppercase tracking-wider hover:bg-binance-goldHover">Calculate Lot Size</button>
+        <div id="calcOut" class="hidden bg-binance-cardBg p-3 rounded-lg border border-binance-cardBorder text-xs space-y-2 font-mono">
+          <div class="flex justify-between"><span>Max Risk Amount:</span><span id="calcRiskAmt" class="text-rose-400 font-bold">$0.00</span></div>
+          <div class="flex justify-between"><span>Position Size (Coins):</span><span id="calcCoinQty" class="text-binance-gold font-bold">0.00</span></div>
+          <div class="flex justify-between"><span>Total Position Value:</span><span id="calcTotalVal" class="text-emerald-400 font-bold">$0.00</span></div>
+          <div class="flex justify-between"><span>Leverage लागेल (≈):</span><span id="calcLev" class="text-white font-bold">--</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tabLog" class="tab-content hidden space-y-3">
+      <div class="glass-card p-4 rounded-xl overflow-x-auto"><div id="log" class="min-w-[600px] space-y-1"></div></div>
+    </div>
+  </div>
+</main>
+
+<!-- SETTINGS -->
+<div id="settingsOverlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4">
+  <div class="bg-binance-darkBg border border-binance-cardBorder w-full max-w-lg rounded-2xl p-4 sm:p-6 shadow-2xl max-h-[90vh] overflow-y-auto space-y-4">
+    <div class="flex items-center justify-between border-b border-binance-cardBorder pb-3">
+      <h3 class="text-base sm:text-lg font-bold text-binance-gold font-mono">⚙️ Analysis Settings</h3>
+      <button id="closeSettings" class="text-binance-muted hover:text-white text-xl font-bold p-1">✕</button>
+    </div>
+    <div class="space-y-2">
+      <h4 class="text-xs font-bold text-binance-gold uppercase border-b border-binance-cardBorder/50 pb-1">📈 EMA</h4>
+      <div class="grid grid-cols-3 gap-2">
+        <div><label class="text-[10px] text-binance-muted block">Fast EMA</label><input id="setEF" type="number" min="1" class="w-full bg-binance-cardBg border border-binance-cardBorder rounded p-1.5 text-xs text-white"></div>
+        <div><label class="text-[10px] text-binance-muted block">Mid EMA</label><input id="setEM" type="number" min="1" class="w-full bg-binance-cardBg border border-binance-cardBorder rounded p-1.5 text-xs text-white"></div>
+        <div><label class="text-[10px] text-binance-muted block">Slow EMA</label><input id="setES" type="number" min="1" class="w-full bg-binance-cardBg border border-binance-cardBorder rounded p-1.5 text-xs text-white"></div>
+      </div>
+    </div>
+    <div class="space-y-2">
+      <h4 class="text-xs font-bold text-binance-gold uppercase border-b border-binance-cardBorder/50 pb-1">📊 RSI</h4>
+      <div class="grid grid-cols-3 gap-2">
+        <div><label class="text-[10px] text-binance-muted block">Period</label><input id="setRP" type="number" min="1" class="w-full bg-binance-cardBg border border-binance-cardBorder rounded p-1.5 text-xs text-white"></div>
+        <div><label class="text-[10px] text-binance-muted block">BUY Level (≥)</label><input id="setRB" type="number" class="w-full bg-binance-cardBg border border-binance-cardBorder rounded p-1.5 text-xs text-white"></div>
+        <div><label class="text-[10px] text-binance-muted block">SELL Level (≤)</label><input id="setRS" type="number" class="w-full bg-binance-cardBg border border-binance-cardBorder rounded p-1.5 text-xs text-white"></div>
+      </div>
+    </div>
+    <div class="space-y-2">
+      <h4 class="text-xs font-bold text-binance-gold uppercase border-b border-binance-cardBorder/50 pb-1">〽️ MACD</h4>
+      <div class="grid grid-cols-3 gap-2">
+        <div><label class="text-[10px] text-binance-muted block">Fast</label><input id="setMF" type="number" min="1" class="w-full bg-binance-cardBg border border-binance-cardBorder rounded p-1.5 text-xs text-white"></div>
+        <div><label class="text-[10px] text-binance-muted block">Slow</label><input id="setMS" type="number" min="1" class="w-full bg-binance-cardBg border border-binance-cardBorder rounded p-1.5 text-xs text-white"></div>
+        <div><label class="text-[10px] text-binance-muted block">Signal</label><input id="setMG" type="number" min="1" class="w-full bg-binance-cardBg border border-binance-cardBorder rounded p-1.5 text-xs text-white"></div>
+      </div>
+    </div>
+    <div class="space-y-2">
+      <h4 class="text-xs font-bold text-binance-gold uppercase border-b border-binance-cardBorder/50 pb-1">📉 SuperTrend</h4>
+      <div class="grid grid-cols-2 gap-2">
+        <div><label class="text-[10px] text-binance-muted block">ATR Period</label><input id="setSP" type="number" min="1" class="w-full bg-binance-cardBg border border-binance-cardBorder rounded p-1.5 text-xs text-white"></div>
+        <div><label class="text-[10px] text-binance-muted block">Multiplier</label><input id="setSM" type="number" step="0.1" class="w-full bg-binance-cardBg border border-binance-cardBorder rounded p-1.5 text-xs text-white"></div>
+      </div>
+    </div>
+    <div class="space-y-2">
+      <h4 class="text-xs font-bold text-binance-gold uppercase border-b border-binance-cardBorder/50 pb-1">📚 Order Book</h4>
+      <div class="grid grid-cols-3 gap-2">
+        <div><label class="text-[10px] text-binance-muted block">Depth Limit</label><input id="setDEPTH" type="number" min="5" class="w-full bg-binance-cardBg border border-binance-cardBorder rounded p-1.5 text-xs text-white"></div>
+        <div><label class="text-[10px] text-binance-muted block">BUY Ratio ≥</label><input id="setOBB" type="number" step="0.05" class="w-full bg-binance-cardBg border border-binance-cardBorder rounded p-1.5 text-xs text-white"></div>
+        <div><label class="text-[10px] text-binance-muted block">SELL Ratio ≤</label><input id="setOBS" type="number" step="0.05" class="w-full bg-binance-cardBg border border-binance-cardBorder rounded p-1.5 text-xs text-white"></div>
+      </div>
+    </div>
+    <div class="space-y-2">
+      <h4 class="text-xs font-bold text-binance-gold uppercase border-b border-binance-cardBorder/50 pb-1">🎯 Final Signal & Trade Plan</h4>
+      <div class="grid grid-cols-3 gap-2">
+        <div><label class="text-[10px] text-binance-muted block">BUY/SELL Score ≥</label><input id="setFT" type="number" min="1" max="99" class="w-full bg-binance-cardBg border border-binance-cardBorder rounded p-1.5 text-xs text-white"></div>
+        <div><label class="text-[10px] text-binance-muted block">STRONG Score ≥</label><input id="setFS" type="number" min="1" max="100" class="w-full bg-binance-cardBg border border-binance-cardBorder rounded p-1.5 text-xs text-white"></div>
+        <div><label class="text-[10px] text-binance-muted block">ADX किमान</label><input id="setADX" type="number" min="1" class="w-full bg-binance-cardBg border border-binance-cardBorder rounded p-1.5 text-xs text-white"></div>
+        <div><label class="text-[10px] text-binance-muted block">SL = ATR ×</label><input id="setSLM" type="number" step="0.1" class="w-full bg-binance-cardBg border border-binance-cardBorder rounded p-1.5 text-xs text-white"></div>
+        <div><label class="text-[10px] text-binance-muted block">Swing Candles</label><input id="setSWL" type="number" min="3" class="w-full bg-binance-cardBg border border-binance-cardBorder rounded p-1.5 text-xs text-white"></div>
+        <div><label class="text-[10px] text-binance-muted block">Confirm Runs</label><input id="setCONF" type="number" min="1" class="w-full bg-binance-cardBg border border-binance-cardBorder rounded p-1.5 text-xs text-white"></div>
+      </div>
+    </div>
+    <div class="flex gap-2 pt-2">
+      <button id="resetSettings" class="flex-1 bg-binance-cardBorder hover:bg-gray-700 text-white font-bold py-2 rounded-xl text-xs">↺ Default</button>
+      <button id="saveSettings" class="flex-1 bg-binance-gold hover:bg-binance-goldHover text-black font-extrabold py-2 rounded-xl text-xs">💾 Save Settings</button>
+    </div>
+    <div id="settingsMsg" class="text-xs text-center font-semibold text-emerald-400"></div>
+  </div>
+</div>
+
+<div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-xs w-full pointer-events-none"></div>
+
+<footer class="max-w-7xl mx-auto px-4 py-3 text-center text-[11px] text-binance-muted border-t border-binance-cardBorder/40 mt-4 space-y-1">
+  <div>KBTIGERS MTF Live Pro Terminal v4 • Powered by Binance Public API</div>
+  <div class="text-[10px] text-gray-500">⚠️ हे फक्त तांत्रिक विश्लेषण आहे, नफ्याची गॅरंटी नाही. नेहमी Stop Loss वापरा.</div>
+</footer>
+
+<script>
+/* PASSWORD GATE */
+const APP_PASSWORD = "111";
+const GATE_KEY = "KBTIGERS - mtf_pro_unlocked";
+(function initGate() {
+  const gate = document.getElementById("pwGate"), input = document.getElementById("pwInput"), btn = document.getElementById("pwBtn"), msg = document.getElementById("pwMsg");
+  function unlock() { gate.style.display = "none"; }
+  let already = false;
+  try { already = localStorage.getItem(GATE_KEY) === "yes"; } catch (e) {}
+  if (already) { unlock(); return; }
+  function check() {
+    if (input.value === APP_PASSWORD) { try { localStorage.setItem(GATE_KEY, "yes"); } catch (e) {} unlock(); }
+    else { msg.textContent = "❌ चुकीचा password"; input.value = ""; input.focus(); }
+  }
+  btn.addEventListener("click", check);
+  input.addEventListener("keydown", e => { if (e.key === "Enter") check(); });
+  input.focus();
+})();
+</script>
+
+<script>
+/* ================= CONSTANTS ================= */
+const C = {
+  EF:20, EM:50, ES:200, RP:14, RB:55, RS:45, MF:12, MS:26, MG:9, SP:10, SM:3,
+  DEPTH:50, OBB:1.2, OBS:0.83,
+  FT:30, FS:55, ADXMIN:20, SLM:1.5, SWL:10, CONF:2
+};
+const C_DEFAULT = {...C};
+const TFS = ["1m","5m","15m","1h","4h","1d","1w"];
+const TF_W = { "1M":0.5, "5M":1, "15M":1.5, "1H":2, "4H":2.5, "1D":3, "1W":2 }; // मोठ्या TF ला जास्त वजन
+const OB_W = 1;
+
+const $ = id => document.getElementById(id);
+let running = false, token = 0, prevLTP = null, prevLTPSym = null, ac = null, wl = null;
+let prevOV = null, prevNV = null, prevFV = null;
+let lastA = null, lastD = null, lastF = null, lastPlan = null;
+let fState = { v:null, count:0 };
+
+const store = {
+  get(k, d){ try { const v = localStorage.getItem("mtf_pro_" + k); return v === null ? d : JSON.parse(v); } catch(e){ return d; } },
+  set(k, v){ try { localStorage.setItem("mtf_pro_" + k, JSON.stringify(v)); } catch(e){} }
+};
+
+const fx = (v, d = 2) => Number(v).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
+const fmtP = v => { const p = Math.abs(Number(v)); const d = p >= 1000 ? 2 : p >= 10 ? 3 : p >= 1 ? 4 : p >= 0.01 ? 5 : 8; return fx(v, d); };
+const fmtN = v => Math.abs(v) >= 1 ? fx(v, 2) : Number(v).toPrecision(3);
+
+/* ================= TOAST ================= */
+function showToast(msg, type = "info") {
+  const c = $("toastContainer"); if (!c) return;
+  const t = document.createElement("div");
+  const bg = type === "success" ? "bg-emerald-900/90 border-emerald-500 text-emerald-200" :
+             type === "error" ? "bg-rose-900/90 border-rose-500 text-rose-200" : "bg-binance-cardBg border-binance-gold text-white";
+  t.className = `p-3 rounded-xl border text-xs font-semibold shadow-xl transition-all duration-300 pointer-events-auto ${bg}`;
+  t.innerHTML = msg; c.appendChild(t);
+  setTimeout(() => { t.classList.add("opacity-0"); setTimeout(() => t.remove(), 300); }, 4500);
+}
+
+/* ================= SETTINGS ================= */
+function loadAnalysisSettings(){
+  const saved = store.get("analysisSettings", null);
+  if (saved && typeof saved === "object") {
+    Object.keys(C_DEFAULT).forEach(k => { const v = Number(saved[k]); if (Number.isFinite(v) && v > 0) C[k] = v; });
+  }
+}
+function settingInputs(){
+  return { EF:"setEF", EM:"setEM", ES:"setES", RP:"setRP", RB:"setRB", RS:"setRS", MF:"setMF", MS:"setMS", MG:"setMG",
+           SP:"setSP", SM:"setSM", DEPTH:"setDEPTH", OBB:"setOBB", OBS:"setOBS",
+           FT:"setFT", FS:"setFS", ADXMIN:"setADX", SLM:"setSLM", SWL:"setSWL", CONF:"setCONF" };
+}
+function fillSettings(){ const ids = settingInputs(); Object.keys(ids).forEach(k => $(ids[k]).value = C[k]); }
+function validSettings(){
+  const ids = settingInputs(), next = {};
+  for (const k of Object.keys(ids)) { const v = Number($(ids[k]).value); if (!Number.isFinite(v) || v <= 0) return false; next[k] = v; }
+  if (next.RB <= next.RS || next.MF >= next.MS) return false;
+  if (next.FS <= next.FT || next.FT >= 100) return false;
+  next.CONF = Math.max(1, Math.round(next.CONF)); next.SWL = Math.max(3, Math.round(next.SWL));
+  Object.assign(C, next); store.set("analysisSettings", C);
+  return true;
+}
+function openSettings(){ fillSettings(); $("settingsMsg").textContent = ""; $("settingsOverlay").classList.remove("hidden"); }
+function closeSettings(){ $("settingsOverlay").classList.add("hidden"); }
+function resetSettings(){ Object.assign(C, C_DEFAULT); store.set("analysisSettings", C); fillSettings(); $("settingsMsg").textContent = "Default restored."; }
+loadAnalysisSettings();
+
+/* ================= API ================= */
+const DEF = ["BTC", "ETH", "CL", "XAU", "XAG", "XRP"];
+let chips = store.get("chips", []), logArr = store.get("log3", []);
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const FU = "https://fapi.binance.com/fapi/v1/", SPOT = "https://api.binance.com/api/v3/";
+const base = m => m === "futures" ? FU : SPOT;
+
+function resolve(raw, q, m) {
+  if (raw === "XAU" || raw === "GOLD") return m === "spot" ? "PAXGUSDT" : "XAUUSDT";
+  if (raw === "XAG" || raw === "SILVER") return "XAGUSDT";
+  return raw.endsWith(q) ? raw : raw + q;
+}
+async function jget(url) { const r = await fetch(url); if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }
+async function avail(m, s) { try { await jget(base(m) + "ticker/price?symbol=" + s); return true; } catch (e) { return false; } }
+async function ticker24(m, s) { try { return await jget(base(m) + "ticker/24hr?symbol=" + s); } catch (e) { return null; } }
+async function klines(m, s, i) {
+  try { const d = await jget(`${base(m)}klines?symbol=${s}&interval=${i}&limit=250`); return d.map(k => ({ h:+k[2], l:+k[3], c:+k[4], v:+k[5] })); }
+  catch (e) { return null; }
+}
+async function orderBook(m, s) {
+  try {
+    const d = await jget(`${base(m)}depth?symbol=${s}&limit=${C.DEPTH}`);
+    if (!d.bids.length || !d.asks.length) return null;
+    const b = d.bids.reduce((a, x) => a + +x[1], 0), k = d.asks.reduce((a, x) => a + +x[1], 0);
+    const ratio = k > 0 ? b / k : 1;
+    return { symbol:s, b, k, ratio, sig: ratio >= C.OBB ? "BUY" : ratio <= C.OBS ? "SELL" : "NEUTRAL" };
+  } catch (e) { return null; }
+}
+
+/* ================= LTP + 24H ================= */
+function showLTP(price, sym) {
+  const el = $("ltp"), se = $("ltpSym"), box = $("ltpBox");
+  if (price == null || !Number.isFinite(Number(price))) { el.textContent = "--"; se.textContent = (sym || "--").toUpperCase(); return; }
+  const p = Number(price), symbol = (sym || "").toUpperCase();
+  if (prevLTP !== null && prevLTPSym === symbol && p !== prevLTP) {
+    box.classList.remove("flash-up", "flash-down"); void box.offsetWidth;
+    box.classList.add(p > prevLTP ? "flash-up" : "flash-down");
+  }
+  el.textContent = "$" + fmtP(p); se.textContent = symbol + " • LIVE";
+  prevLTP = p; prevLTPSym = symbol;
+}
+function show24h(t) {
+  if (!t) return;
+  const ch = +t.priceChange, pct = +t.priceChangePercent, qv = +t.quoteVolume;
+  const cls = "text-xs sm:text-sm font-extrabold font-mono " + (ch > 0 ? "text-emerald-400" : ch < 0 ? "text-rose-400" : "text-binance-gold");
+  const sign = ch > 0 ? "+" : "";
+  $("ltpChange").textContent = sign + fmtP(ch); $("ltpChange").className = cls;
+  $("ltpChangePct").textContent = sign + pct.toFixed(2) + "%"; $("ltpChangePct").className = cls;
+  $("ltpVol").textContent = qv >= 1e9 ? "$" + (qv / 1e9).toFixed(2) + "B" : qv >= 1e6 ? "$" + (qv / 1e6).toFixed(2) + "M" : "$" + fx(qv, 0);
+}
+
+/* ================= INDICATORS ================= */
+function emaS(x, p) { const a = 2 / (p + 1), o = [x[0]]; for (let i = 1; i < x.length; i++) o.push(a * x[i] + (1 - a) * o[i - 1]); return o; }
+
+function rsi(x, p) {
+  const a = 1 / p; let g = 0, l = 0;
+  for (let i = 1; i < x.length; i++) {
+    const d = x[i] - x[i - 1], G = Math.max(d, 0), L = Math.max(-d, 0);
+    if (i === 1) { g = G; l = L; } else { g = a * G + (1 - a) * g; l = a * L + (1 - a) * l; }
+  }
+  return 100 - 100 / (1 + g / (l + 1e-9));
+}
+
+function supertrend(h, l, c, p, m) {
+  const n = c.length, a = 1 / p, atr = [];
+  for (let i = 0; i < n; i++) {
+    const tr = i === 0 ? h[0] - l[0] : Math.max(h[i] - l[i], Math.abs(h[i] - c[i - 1]), Math.abs(l[i] - c[i - 1]));
+    atr.push(i === 0 ? tr : a * tr + (1 - a) * atr[i - 1]);
+  }
+  const bu = [], bl = [];
+  for (let i = 0; i < n; i++) { const m2 = (h[i] + l[i]) / 2; bu.push(m2 + m * atr[i]); bl.push(m2 - m * atr[i]); }
+  const fu = bu.slice(), fl = bl.slice(), dir = new Array(n).fill(1), st = new Array(n).fill(0);
+  for (let i = 1; i < n; i++) {
+    fu[i] = (bu[i] < fu[i - 1] || c[i - 1] > fu[i - 1]) ? bu[i] : fu[i - 1];
+    fl[i] = (bl[i] > fl[i - 1] || c[i - 1] < fl[i - 1]) ? bl[i] : fl[i - 1];
+    if (dir[i - 1] === 1) { if (c[i] < fl[i]) { dir[i] = -1; st[i] = fu[i]; } else { dir[i] = 1; st[i] = fl[i]; } }
+    else { if (c[i] > fu[i]) { dir[i] = 1; st[i] = fl[i]; } else { dir[i] = -1; st[i] = fu[i]; } }
+  }
+  return { st: st[n - 1], dir: dir[n - 1], atr: atr[n - 1] };
+}
+
+function adxCalc(h, l, c, p) {
+  const n = c.length; if (n < p * 2 + 2) return null;
+  let tr = 0, pd = 0, md = 0, adx = null, pdi = 0, mdi = 0; const dxs = [];
+  for (let i = 1; i < n; i++) {
+    const up = h[i] - h[i - 1], dn = l[i - 1] - l[i];
+    const P = (up > dn && up > 0) ? up : 0, M = (dn > up && dn > 0) ? dn : 0;
+    const T = Math.max(h[i] - l[i], Math.abs(h[i] - c[i - 1]), Math.abs(l[i] - c[i - 1]));
+    if (i <= p) { tr += T; pd += P; md += M; if (i < p) continue; }
+    else { tr = tr - tr / p + T; pd = pd - pd / p + P; md = md - md / p + M; }
+    pdi = 100 * pd / (tr || 1e-9); mdi = 100 * md / (tr || 1e-9);
+    const dx = 100 * Math.abs(pdi - mdi) / ((pdi + mdi) || 1e-9);
+    if (adx === null) { dxs.push(dx); if (dxs.length === p) adx = dxs.reduce((a, b) => a + b, 0) / p; }
+    else adx = (adx * (p - 1) + dx) / p;
+  }
+  return adx === null ? null : { adx, pdi, mdi };
+}
+
+/* फक्त बंद झालेल्या candles वर indicators (repaint नाही) */
+async function analyze(m, s, tf) {
+  const raw = await klines(m, s, tf);
+  if (!raw || raw.length < 31) return null;
+  const live = raw[raw.length - 1].c, d = raw.slice(0, -1);
+  const c = d.map(x => x.c), h = d.map(x => x.h), l = d.map(x => x.l), v = d.map(x => x.v), L = c.length - 1, close = c[L];
+  const ef = emaS(c, C.EF)[L], em = emaS(c, C.EM)[L], hasS = c.length >= C.ES, es = hasS ? emaS(c, C.ES)[L] : em;
+
+  let eS = "NEUTRAL";
+  if (hasS) { if (close > es && ef > em) eS = "BUY"; else if (close < es && ef < em) eS = "SELL"; }
+  else { if (ef > em && close > em) eS = "BUY"; else if (ef < em && close < em) eS = "SELL"; }
+
+  const r = rsi(c, C.RP), rS = r >= C.RB ? "BUY" : r <= C.RS ? "SELL" : "NEUTRAL";
+  const f = emaS(c, C.MF), s2 = emaS(c, C.MS), mac = f.map((x, i) => x - s2[i]), sg = emaS(mac, C.MG);
+  const hist = mac[L] - sg[L];
+  const mS = hist > 0 ? "BUY" : hist < 0 ? "SELL" : "NEUTRAL";
+  const t = supertrend(h, l, c, C.SP, C.SM), tS = t.dir === 1 ? "BUY" : "SELL";
+  const ax = adxCalc(h, l, c, 14);
+
+  const nSw = Math.min(C.SWL, c.length);
+  const swL = Math.min(...l.slice(-nSw)), swH = Math.max(...h.slice(-nSw));
+  const vb = v.slice(-21, -1), va = vb.reduce((a, b) => a + b, 0) / (vb.length || 1), vr = va > 0 ? v[L] / va : 1;
+
+  const sv = x => x === "BUY" ? 1 : x === "SELL" ? -1 : 0;
+  const sg4 = [eS, rS, mS, tS], score = sg4.reduce((a, x) => a + sv(x), 0);
+  const b = sg4.filter(x => x === "BUY").length, se = sg4.filter(x => x === "SELL").length;
+
+  return { tf: tf.toUpperCase(), price: live, close, ef, em, es: hasS ? es : null, eS, r, rS, hist, mS,
+           st: t.st, tS, atr: t.atr, adx: ax ? ax.adx : null, swL, swH, vr, score,
+           tfS: b >= 3 ? "BUY" : se >= 3 ? "SELL" : "NEUTRAL" };
+}
+
+/* ================= OLD / NEW (मूळ logic) ================= */
+function collectSig(d) {
+  const sig = [];
+  if (d.fob) sig.push(d.fob.sig); else if (d.sob) sig.push(d.sob.sig);
+  const act = d.fa ? d.fm : d.sm;
+  for (const t of TFS) { const r = act[t.toUpperCase()]; if (r) sig.push(r.tfS); }
+  return { sig, act };
+}
+function verdictOld(d) {
+  const { sig, act } = collectSig(d);
+  if (!sig.length) return ["NO TRADE", "डेटा उपलब्ध नाही.", "0%"];
+  const b = sig.filter(x => x === "BUY").length, s = sig.filter(x => x === "SELL").length, n = sig.length;
+  const a4 = act["4H"] ? act["4H"].tfS : "NEUTRAL", a1 = act["1D"] ? act["1D"].tfS : "NEUTRAL";
+  if (a1 !== "NEUTRAL" && a4 !== "NEUTRAL" && a1 !== a4) return ["NEUTRAL", `1D ${a1} व 4H ${a4}`, Math.round(Math.max(b, s) / n * 100) + "%"];
+  if (b / n >= 0.6 && s <= 2) return ["BUY", `${b}/${n} BUY`, Math.round(b / n * 100) + "%"];
+  if (s / n >= 0.6 && b <= 2) return ["SELL", `${s}/${n} SELL`, Math.round(s / n * 100) + "%"];
+  const neu = sig.filter(x => x === "NEUTRAL").length;
+  return ["NEUTRAL", `B:${b} S:${s} N:${neu}`, Math.round(Math.max(b, s, neu) / n * 100) + "%"];
+}
+function verdictNew(d) {
+  const { sig } = collectSig(d);
+  if (!sig.length) return ["NO TRADE", "डेटा उपलब्ध नाही.", "0%"];
+  const b = sig.filter(x => x === "BUY").length, s = sig.filter(x => x === "SELL").length, n = b + s;
+  if (n === 0) return ["NEUTRAL", "BUY/SELL नाही", "0%"];
+  if (b > s) return ["BUY", `B:${b} S:${s}`, Math.round(b / n * 100) + "%"];
+  if (s > b) return ["SELL", `B:${b} S:${s}`, Math.round(s / n * 100) + "%"];
+  return ["NEUTRAL", `B:${b} S:${s}`, "50%"];
+}
+
+/* ================= FINAL SIGNAL (Weighted + Filters) ================= */
+function verdictFinal(d, ttf) {
+  const act = d.fa ? d.fm : d.sm, ob = d.fob || d.sob;
+  let sum = 0, wsum = 0, cnt = 0;
+  for (const tf of TFS) {
+    const r = act[tf.toUpperCase()]; if (!r) continue;
+    const w = TF_W[r.tf] || 1; sum += w * r.score / 4; wsum += w; cnt++;
+  }
+  if (ob) { sum += OB_W * (ob.sig === "BUY" ? 1 : ob.sig === "SELL" ? -1 : 0); wsum += OB_W; }
+  if (!wsum) return { v:"WAIT", label:"NO DATA", score:0, notes:["डेटा उपलब्ध नाही."], ttf };
+
+  const score = Math.round(sum / wsum * 100);
+  const notes = [];
+  let dir = score >= C.FT ? "BUY" : score <= -C.FT ? "SELL" : "WAIT";
+  let strong = Math.abs(score) >= C.FS;
+  const t = act[ttf.toUpperCase()], h1 = act["1H"], h4 = act["4H"], d1 = act["1D"];
+
+  // 1) मोठ्या TF मध्ये कन्फ्लिक्ट
+  if (dir !== "WAIT" && d1 && h4 && d1.tfS !== "NEUTRAL" && h4.tfS !== "NEUTRAL" && d1.tfS !== h4.tfS) {
+    notes.push(`⛔ 1D ${d1.tfS} vs 4H ${h4.tfS} – मोठ्या TF मध्ये कन्फ्लिक्ट`); dir = "WAIT";
+  }
+  // 2) 1H/4H विरुद्ध दिशा
+  if (dir !== "WAIT") {
+    const opp = dir === "BUY" ? "SELL" : "BUY";
+    if ((h4 && h4.tfS === opp) || (h1 && h1.tfS === opp)) { notes.push(`⛔ 1H/4H ट्रेंड ${opp} – विरुद्ध दिशा, थांबा`); dir = "WAIT"; }
+  }
+  // 3) Trade TF SuperTrend दिशेत हवा
+  if (dir !== "WAIT" && t && t.tS !== dir) { notes.push(`⏳ ${t.tf} SuperTrend अजून ${t.tS} – flip ची वाट पहा`); dir = "WAIT"; }
+  // 4) ADX ट्रेंड strength
+  if (dir !== "WAIT" && t && t.adx != null) {
+    if (t.adx < C.ADXMIN) {
+      if (strong) { strong = false; notes.push(`⚠️ ADX ${fx(t.adx,0)} – ट्रेंड कमकुवत (STRONG काढले)`); }
+      else { notes.push(`⛔ ADX ${fx(t.adx,0)} < ${C.ADXMIN} – sideways मार्केट`); dir = "WAIT"; }
+    } else if (t.adx >= 25) notes.push(`✅ ADX ${fx(t.adx,0)} – ट्रेंड मजबूत`);
+  }
+  // 5) RSI extreme
+  if (dir === "BUY" && t && t.r >= 75) { strong = false; notes.push(`⚠️ RSI ${fx(t.r,0)} overbought – pullback zone मध्ये एंट्री चांगली`); }
+  if (dir === "SELL" && t && t.r <= 25) { strong = false; notes.push(`⚠️ RSI ${fx(t.r,0)} oversold – pullback zone मध्ये एंट्री चांगली`); }
+  // 6) Volume
+  if (dir !== "WAIT" && t) {
+    if (t.vr < 0.7) notes.push(`⚠️ ${t.tf} volume सरासरीपेक्षा कमी (${fx(t.vr,2)}x)`);
+    else if (t.vr >= 1.5) notes.push(`✅ ${t.tf} volume spike (${fx(t.vr,2)}x)`);
+  }
+  if (dir !== "WAIT") {
+    const al = TFS.filter(x => act[x.toUpperCase()] && act[x.toUpperCase()].tfS === dir).length;
+    notes.unshift(`✅ ${al}/${cnt} Timeframes ${dir} दिशेत • Score ${score > 0 ? "+" : ""}${score}`);
+  } else if (!notes.length) {
+    notes.push(`⏳ Score ${score > 0 ? "+" : ""}${score} – स्पष्ट दिशा नाही (±${C.FT} हवा)`);
+  }
+  const label = dir === "WAIT" ? "WAIT" : (strong ? "STRONG " : "") + dir;
+  return { v: dir, label, score, notes, ttf };
+}
+
+function computeFinal(d) { return verdictFinal(d, $("ttfSel").value); }
+function applyConfirm(f, bump) {
+  if (f.v === fState.v) { if (bump) fState.count++; } else { fState.v = f.v; fState.count = 1; }
+  f.count = fState.count;
+  f.confirmed = f.v !== "WAIT" && f.count >= C.CONF;
+  f.justConfirmed = bump && f.confirmed && f.count === C.CONF;
+  return f;
+}
+
+/* ================= TRADE PLAN ================= */
+function computePlan(f, d) {
+  if (!d) return null;
+  const act = d.fa ? d.fm : d.sm, t = act[f.ttf.toUpperCase()];
+  if (!t || !d.px || !t.atr) return null;
+  const px = d.px, atr = t.atr;
+  if (f.v === "BUY" || f.v === "SELL") {
+    const s = f.v === "BUY" ? 1 : -1;
+    const atrSL = px - s * C.SLM * atr;
+    const swSL = s === 1 ? t.swL - 0.2 * atr : t.swH + 0.2 * atr;
+    let sl = s === 1 ? Math.min(atrSL, swSL) : Math.max(atrSL, swSL);   // जो जास्त सुरक्षित
+    const capSL = px - s * 3 * atr;                                     // कमाल 3×ATR
+    sl = s === 1 ? Math.max(sl, capSL) : Math.min(sl, capSL);
+    const risk = Math.abs(px - sl);
+    const zoneOk = s === 1 ? t.ef < px : t.ef > px;
+    return { dir: f.v, entry: px, sl, risk, tp: [1, 2, 3].map(k => px + s * k * risk),
+             zone: zoneOk ? [Math.min(t.ef, px), Math.max(t.ef, px)] : null, atr, tf: t.tf };
+  }
+  return { dir: "WAIT", swH: t.swH, swL: t.swL, st: t.st, tS: t.tS, atr, tf: t.tf };
+}
+
+const tile = (lbl, val, sub, cls) => `<div class="bg-binance-cardBg/70 border border-binance-cardBorder rounded-lg p-2">
+  <div class="text-[10px] text-binance-muted uppercase font-semibold">${lbl}</div>
+  <div class="text-sm sm:text-base font-extrabold font-mono ${cls}">${val}</div>
+  ${sub ? `<div class="text-[10px] text-gray-400 font-mono leading-tight">${sub}</div>` : ""}</div>`;
+
+function renderPlan(f, p) {
+  $("planCard").classList.remove("hidden");
+  const body = $("planBody");
+  if (!p) {
+    body.innerHTML = '<div class="text-xs text-binance-muted">Trade TF चा डेटा उपलब्ध नाही.</div>';
+  } else if (p.dir === "WAIT") {
+    body.innerHTML = `<div class="text-sm font-bold text-binance-gold mb-2">⏳ WAIT — आत्ता एंट्री घेऊ नका. या लेव्हल्सवर लक्ष ठेवा:</div>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        ${tile("BUY Trigger ↑", fmtP(p.swH), `${p.tf} swing high वर close`, "text-emerald-400")}
+        ${tile("SELL Trigger ↓", fmtP(p.swL), `${p.tf} swing low खाली close`, "text-rose-400")}
+        ${tile("SuperTrend", fmtP(p.st), `सध्या ${p.tS}`, p.tS === "BUY" ? "text-emerald-400" : "text-rose-400")}
+        ${tile("ATR (" + p.tf + ")", fmtP(p.atr), "सरासरी हालचाल", "text-binance-gold")}
+      </div>`;
+  } else {
+    const e = p.entry, pc = x => { const v = (x - e) / e * 100; return (v > 0 ? "+" : "") + v.toFixed(2) + "%"; };
+    const cap = +$("calcCap").value || 0, rp = +$("calcRiskPct").value || 0, ra = cap * rp / 100;
+    const qty = p.risk > 0 ? ra / p.risk : 0, pv = qty * e;
+    const dirCls = p.dir === "BUY" ? "text-emerald-400" : "text-rose-400";
+    body.innerHTML = `<div class="text-sm font-extrabold mb-2 ${dirCls}">${p.dir === "BUY" ? "🟢 LONG" : "🔴 SHORT"} SETUP • ${p.tf}${f.confirmed ? " • ✔ CONFIRMED" : " • ⏳ पुष्टी होत आहे"}</div>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        ${tile("ENTRY (Live)", fmtP(e), p.zone ? `Pullback zone: ${fmtP(p.zone[0])} – ${fmtP(p.zone[1])}` : "Market entry", "text-binance-gold")}
+        ${tile("STOP LOSS", fmtP(p.sl), `${pc(p.sl)} • ${fx(p.risk / p.atr, 1)}×ATR`, "text-rose-400")}
+        ${tile("TARGET 1 (1R)", fmtP(p.tp[0]), `${pc(p.tp[0])} • 50% बुक करा`, "text-emerald-400")}
+        ${tile("TARGET 2 (2R)", fmtP(p.tp[1]), `${pc(p.tp[1])} • SL entry वर आणा`, "text-emerald-400")}
+        ${tile("TARGET 3 (3R)", fmtP(p.tp[2]), `${pc(p.tp[2])} • बाकी trail करा`, "text-emerald-400")}
+        ${tile("RISK / COIN", fmtP(p.risk), "R:R = 1:1 • 1:2 • 1:3", "text-white")}
+        ${tile("QTY (Coins)", qty ? (qty >= 100 ? fx(qty, 1) : qty.toFixed(4)) : "--", `Risk $${fx(ra)} (${rp}% of $${fx(cap, 0)})`, "text-binance-gold")}
+        ${tile("POSITION VALUE", "$" + fx(pv), cap ? `Leverage ≈ ${fx(pv / cap, 1)}x` : "", "text-white")}
+      </div>
+      <button id="planFillBtn" class="mt-2 text-[11px] font-extrabold px-3 py-1.5 rounded-lg bg-binance-gold/10 text-binance-gold border border-binance-gold/30 hover:bg-binance-gold/20">🧮 Calculator मध्ये भरा</button>`;
+    $("planFillBtn").onclick = () => {
+      $("calcEntry").value = +e.toPrecision(8); $("calcSl").value = +p.sl.toPrecision(8);
+      $("calcComputeBtn").click(); $("tabCalcBtn").click();
+    };
+  }
+  $("planNotes").innerHTML = (f.notes || []).map(n => `<div>${n}</div>`).join("");
+}
+
+/* ================= RENDER ================= */
+function verdictClass(v) {
+  if (String(v).includes("BUY")) return "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40";
+  if (String(v).includes("SELL")) return "bg-rose-500/20 text-rose-400 border border-rose-500/40";
+  return "bg-binance-gold/20 text-binance-gold border border-binance-gold/40";
+}
+function badgeStyle(sig) {
+  if (String(sig).includes("BUY")) return "bg-emerald-500/10 text-emerald-400 border-emerald-500/30";
+  if (String(sig).includes("SELL")) return "bg-rose-500/10 text-rose-400 border-rose-500/30";
+  return "bg-binance-gold/10 text-binance-gold border-binance-gold/30";
+}
+function setVerdictBox(prefix, v, why, conf) {
+  const t = $(prefix + "Text");
+  t.textContent = v; t.title = why;
+  t.className = `px-1.5 py-0.5 rounded font-extrabold ${verdictClass(v)}`;
+  $(prefix + "Conf").textContent = conf;
+}
+
+function renderFinal(f) {
+  lastF = f;
+  const col = f.v === "BUY" ? "#0ECB81" : f.v === "SELL" ? "#F6465D" : "#F0B90B";
+  const box = $("verdictBanner"); box.classList.remove("hidden"); box.style.borderLeftColor = col;
+  const t = $("fvText"); t.textContent = f.label;
+  t.className = `text-xl sm:text-3xl font-black font-mono px-2.5 py-0.5 rounded-lg uppercase ${verdictClass(f.v)}`;
+  $("fvScore").textContent = `Score ${f.score > 0 ? "+" : ""}${f.score}`;
+  const cf = $("fvConfirm");
+  if (f.v === "WAIT") { cf.className = "hidden"; }
+  else if (f.confirmed) { cf.textContent = "✔ CONFIRMED"; cf.className = "text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/40"; }
+  else { cf.textContent = `⏳ पुष्टी ${f.count}/${C.CONF}`; cf.className = "text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-binance-gold/15 text-binance-gold border border-binance-gold/40"; }
+  const bar = $("fvBar"), a = Math.min(100, Math.abs(f.score));
+  bar.style.width = (a / 2) + "%"; bar.style.left = f.score >= 0 ? "50%" : (50 - a / 2) + "%"; bar.style.background = col;
+
+  const plan = computePlan(f, lastD);
+  lastPlan = plan && plan.dir !== "WAIT" ? plan : null;
+  renderPlan(f, plan);
+  chDrawPlan();
+  applySignalTheme(f.v === "WAIT" ? "NEUTRAL" : f.v);
+  updateTabTitleAndFavicon(f.v, f.label, lastD ? lastD.px : null, lastD ? lastD.sym : "");
+}
+
+function updateTabTitleAndFavicon(v, label, px, sym) {
+  const icon = v === "BUY" ? "🟢" : v === "SELL" ? "🔴" : "🟡";
+  document.title = `${icon} ${label} ${px ? "$" + fmtP(px) : ""} ${sym}`;
+  let fav = document.querySelector("link[rel*='icon']");
+  if (!fav) { fav = document.createElement("link"); fav.rel = "shortcut icon"; document.head.appendChild(fav); }
+  const color = v === "BUY" ? "#0ECB81" : v === "SELL" ? "#F6465D" : "#F0B90B";
+  fav.href = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="${color}"/></svg>`);
+}
+
+const SIGNAL_THEME = { BUY:{ head:"#0ECB81", bg:"#06231A" }, SELL:{ head:"#F6465D", bg:"#2A0B11" }, NEUTRAL:{ head:"#F0B90B", bg:"#1F1A08" } };
+function applySignalTheme(v) {
+  const t = SIGNAL_THEME[v] || SIGNAL_THEME.NEUTRAL;
+  document.body.style.backgroundColor = t.bg;
+  const header = document.querySelector("header"); if (header) header.style.backgroundColor = t.bg;
+  const sb = $("stickyBar"); if (sb) sb.style.backgroundColor = t.bg;
+  const h1 = document.querySelector("header h1");
+  if (h1) { h1.style.color = t.head; const sp = h1.querySelector("span"); if (sp) sp.style.color = t.head; }
+}
+
+function table(title, sym, av, mtf, ob) {
+  if (!av) return `<div class="glass-card p-3 rounded-xl text-xs text-binance-muted"><b>${title} (${sym})</b> - उपलब्ध नाही</div>`;
+  let h = `<div class="glass-card rounded-xl p-3 sm:p-4 space-y-3">
+    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-binance-cardBorder pb-2">
+      <b class="text-xs sm:text-sm text-binance-gold font-mono">${title} (${sym})</b>
+      ${ob ? `<span class="text-[11px] font-mono bg-binance-cardBg px-2.5 py-1 rounded-lg border border-binance-cardBorder">Bid: <span class="text-emerald-400 font-bold">${fx(ob.b,0)}</span> | Ask: <span class="text-rose-400 font-bold">${fx(ob.k,0)}</span> | Ratio: <b class="text-binance-gold">${fx(ob.ratio,2)}</b></span>` : ""}
+    </div>
+    <div class="overflow-x-auto"><table class="w-full text-left border-collapse text-xs font-mono">
+      <thead><tr class="text-binance-muted border-b border-binance-cardBorder text-[11px]">
+        <th class="py-2 px-2">TF</th><th class="py-2 px-2">PRICE</th><th class="py-2 px-2">EMA (F/M/S)</th><th class="py-2 px-2">RSI</th>
+        <th class="py-2 px-2">MACD H</th><th class="py-2 px-2">ST TREND</th><th class="py-2 px-2">ADX</th><th class="py-2 px-2 text-right">OVERALL</th>
+      </tr></thead><tbody class="divide-y divide-binance-cardBorder/40">`;
+  for (const t of TFS) {
+    const r = mtf[t.toUpperCase()];
+    if (!r) { h += `<tr><td class="py-2 px-2 font-bold text-gray-400">${t.toUpperCase()}</td><td colspan="7" class="py-2 px-2 text-binance-muted text-center">डेटा नाही</td></tr>`; continue; }
+    const adxCls = r.adx == null ? "text-binance-muted" : r.adx >= 25 ? "text-white font-bold" : r.adx < C.ADXMIN ? "text-binance-muted" : "text-gray-300";
+    h += `<tr class="hover:bg-binance-cardBg/50">
+      <td class="py-2 px-2 font-extrabold text-white">${r.tf}</td>
+      <td class="py-2 px-2 text-gray-200">${fmtP(r.price)}</td>
+      <td class="py-2 px-2 text-gray-300 whitespace-nowrap"><span class="text-emerald-400">${fmtP(r.ef)}</span>/${fmtP(r.em)}/<span class="text-rose-400">${r.es ? fmtP(r.es) : "N/A"}</span></td>
+      <td class="py-2 px-2"><span class="${badgeStyle(r.rS)} px-1.5 py-0.5 rounded border text-[10px] font-bold">${fx(r.r,1)}</span></td>
+      <td class="py-2 px-2"><span class="${badgeStyle(r.mS)} px-1.5 py-0.5 rounded border text-[10px] font-bold">${fmtN(r.hist)}</span></td>
+      <td class="py-2 px-2"><span class="${badgeStyle(r.tS)} px-1.5 py-0.5 rounded border text-[10px] font-bold">${fmtP(r.st)}</span></td>
+      <td class="py-2 px-2 ${adxCls}">${r.adx != null ? fx(r.adx,0) : "--"}</td>
+      <td class="py-2 px-2 text-right"><span class="${badgeStyle(r.tfS)} px-2 py-0.5 rounded-md border text-[11px] font-black">${r.tfS}</span></td>
+    </tr>`;
+  }
+  return h + `</tbody></table></div></div>`;
+}
+
+function renderObVisual(ob) {
+  if (!ob) return '<div class="text-center text-xs text-binance-muted">ऑर्डर बुक डेटा उपलब्ध नाही.</div>';
+  const total = ob.b + ob.k, buyPct = total > 0 ? ((ob.b / total) * 100).toFixed(1) : 50, sellPct = (100 - buyPct).toFixed(1);
+  return `<div class="space-y-3">
+    <div class="flex justify-between text-xs font-mono"><span class="text-emerald-400 font-bold">Bids: ${fx(ob.b,2)} (${buyPct}%)</span><span class="text-rose-400 font-bold">Asks: ${fx(ob.k,2)} (${sellPct}%)</span></div>
+    <div class="w-full h-4 bg-binance-cardBg rounded-full overflow-hidden flex border border-binance-cardBorder">
+      <div class="bg-emerald-500 h-full transition-all duration-500" style="width:${buyPct}%"></div><div class="bg-rose-500 h-full transition-all duration-500" style="width:${sellPct}%"></div>
+    </div>
+    <div class="flex items-center justify-between text-xs"><span class="text-binance-muted">Bid/Ask Ratio: <b class="text-binance-gold font-mono">${fx(ob.ratio,2)}</b></span>
+      <span class="px-2.5 py-0.5 rounded-full border ${badgeStyle(ob.sig)} text-xs font-bold">${ob.sig} POWER</span></div>
+  </div>`;
+}
+
+/* ================= MAIN RUN ================= */
+async function runOnce(n, A, my) {
+  lastA = A;
+  const d = { fa: A.fa, sa: A.sa, fm: {}, sm: {} };
+  const mk = A.fa ? "futures" : "spot", sym = A.fa ? A.fs : A.ss;
+  let t24 = null;
+  const jobs = [ticker24(mk, sym).then(x => t24 = x)];
+  if (A.fa) jobs.push(orderBook("futures", A.fs).then(x => d.fob = x));
+  if (A.sa) jobs.push(orderBook("spot", A.ss).then(x => d.sob = x));
+  for (const t of TFS) {
+    if (A.fa) jobs.push(analyze("futures", A.fs, t).then(x => d.fm[t.toUpperCase()] = x));
+    if (A.sa) jobs.push(analyze("spot", A.ss, t).then(x => d.sm[t.toUpperCase()] = x));
+  }
+  await Promise.all(jobs);
+  if (my !== token) return;
+
+  const act = A.fa ? d.fm : d.sm, p1 = act["1M"];
+  d.px = t24 ? +t24.lastPrice : p1 ? p1.price : null;
+  d.sym = sym;
+  lastD = d;
+
+  showLTP(d.px, sym); show24h(t24);
+  $("marketBadge").textContent = A.fa ? "FUTURES" : "SPOT";
+
+  const [ov, owhy, oconf] = verdictOld(d), [nv, nwhy, nconf] = verdictNew(d);
+  setVerdictBox("ov", ov, owhy, oconf);
+  setVerdictBox("nv", nv, nwhy, nconf);
+
+  const f = applyConfirm(computeFinal(d), true);
+  renderFinal(f);
+
+  $("out").innerHTML = table("FUTURES (USDT-M)", A.fs, A.fa, d.fm, d.fob) + table("SPOT", A.ss, A.sa, d.sm, d.sob);
+  $("obVisualBox").innerHTML = renderObVisual(d.fob || d.sob);
+
+  onVerdict(ov, nv, f, d.px, sym);
+}
+
+function saveSet() { ["sym", "quote", "rep", "cyc"].forEach(k => store.set(k, $(k).value)); }
+function loadSet() { ["sym", "quote", "rep", "cyc"].forEach(k => { $(k).value = store.get(k, $(k).value); }); }
+
+function renderChips() {
+  const cur = $("sym").value.trim().toUpperCase(), box = $("chips"); box.innerHTML = "";
+  [...DEF, ...chips].forEach(s => {
+    const b = document.createElement("button");
+    b.className = `px-3 py-1.5 rounded-lg border text-xs font-bold font-mono transition flex items-center gap-1.5 shrink-0 ${s === cur ? "bg-binance-gold text-black border-binance-gold" : "bg-binance-cardBg text-gray-300 border-binance-cardBorder hover:border-binance-gold"}`;
+    b.textContent = s;
+    if (chips.includes(s)) {
+      const x = document.createElement("span"); x.textContent = "✕"; x.className = "text-[10px] opacity-60 hover:opacity-100 ml-1";
+      x.onclick = e => { e.stopPropagation(); chips = chips.filter(c => c !== s); store.set("chips", chips); renderChips(); };
+      b.appendChild(x);
+    }
+    b.onclick = () => { $("sym").value = s; saveSet(); unlockAudio(); loop(); };
+    box.appendChild(b);
+  });
+}
+
+/* ================= AUDIO ================= */
+let sndEnabled = true;
+function unlockAudio() { try { ac = ac || new (window.AudioContext || window.webkitAudioContext)(); ac.resume(); } catch (e) {} }
+function synthChime(freqs) {
+  if (!sndEnabled) return;
+  try {
+    unlockAudio();
+    freqs.forEach((f, i) => {
+      const o = ac.createOscillator(), g = ac.createGain(); o.connect(g); g.connect(ac.destination);
+      o.frequency.value = f; g.gain.value = 0.15;
+      o.start(ac.currentTime + i * 0.12); o.stop(ac.currentTime + i * 0.12 + 0.2);
+    });
+  } catch (e) {}
+}
+function alertNow(dir) {
+  synthChime(dir === "SELL" ? [1174, 880, 587] : [587, 880, 1174]);
+  try { navigator.vibrate && navigator.vibrate([200, 100, 200]); } catch (e) {}
+}
+async function wake() { try { if (navigator.wakeLock) wl = await navigator.wakeLock.request("screen"); } catch (e) {} }
+
+/* ================= LOG ================= */
+function clearSignalLog() {
+  if (!confirm("सर्व Signal History खरंच clear करायची आहे का?")) return;
+  logArr = []; store.set("log3", logArr); renderLog(); showToast("Signal History clear झाली.", "success");
+}
+function renderLog() {
+  const cols = "grid grid-cols-[70px_90px_1fr_1fr_1.3fr_90px] gap-2";
+  const head = `<div class="${cols} text-[10px] font-bold text-binance-muted uppercase pb-1 border-b border-binance-cardBorder">
+    <span>वेळ</span><span>Symbol</span><span class="text-center">OLD</span><span class="text-center">NEW</span><span class="text-center">FINAL</span><span class="text-right">Price</span></div>`;
+  const cell = (a, b) => `<span class="text-center px-1.5 py-0.5 rounded text-[10px] font-extrabold border ${badgeStyle(b)}">${a} ➔ ${b}</span>`;
+  const rows = logArr.length ? logArr.map(l => `<div class="${cols} items-center text-xs py-1.5 border-b border-binance-cardBorder/40 font-mono">
+      <span class="text-binance-muted">${l.t}</span><span class="font-bold text-white">${l.sym}</span>
+      ${cell(l.of, l.ot)}${cell(l.nf, l.nt)}${cell(l.ff || "-", l.ft || "-")}
+      <span class="text-binance-gold font-bold text-right">${l.px ? "$" + fmtP(l.px) : "-"}</span></div>`).join("")
+    : '<div class="text-xs text-binance-muted py-2">अजून लॉग उपलब्ध नाही.</div>';
+  $("log").innerHTML = `<div class="flex items-center justify-between mb-2">
+      <h3 class="text-xs font-bold text-binance-gold uppercase tracking-wider">📜 Signal History (OLD | NEW | FINAL)</h3>
+      <button onclick="clearSignalLog()" class="text-[11px] font-extrabold px-2.5 py-1 rounded-lg bg-rose-500/10 text-rose-400 border border-rose-500/30 hover:bg-rose-500/20">🗑 CLEAR LOG</button>
+    </div>` + head + rows;
+}
+
+function onVerdict(ov, nv, f, px, sym) {
+  const oldCh = prevOV !== null && ov !== prevOV, newCh = prevNV !== null && nv !== prevNV, finCh = prevFV !== null && f.label !== prevFV;
+  if (oldCh || newCh || finCh) {
+    logArr.unshift({ t: new Date().toLocaleTimeString("en-IN"), sym, of: prevOV ?? "-", ot: ov, nf: prevNV ?? "-", nt: nv, ff: prevFV ?? "-", ft: f.label, px });
+    logArr = logArr.slice(0, 80); store.set("log3", logArr); renderLog();
+  }
+  if (f.justConfirmed) {
+    alertNow(f.v);
+    const pl = lastPlan ? ` <br>Entry ${fmtP(lastPlan.entry)} • SL ${fmtP(lastPlan.sl)} • TP1 ${fmtP(lastPlan.tp[0])}` : "";
+    showToast(`🎯 CONFIRMED: <b>${sym}</b> वर <b>${f.label}</b>${pl}`, f.v === "BUY" ? "success" : "error");
+  }
+  prevOV = ov; prevNV = nv; prevFV = f.label;
+}
+
+async function loop() {
+  const my = ++token; running = true;
+  prevOV = null; prevNV = null; prevFV = null; prevLTP = null; prevLTPSym = null;
+  lastA = null; lastD = null; lastF = null; lastPlan = null; fState = { v:null, count:0 };
+  $("planCard").classList.add("hidden"); $("verdictBanner").classList.add("hidden");
+  renderChips(); wake();
+
+  const raw = $("sym").value.trim().toUpperCase(), q = $("quote").value.trim().toUpperCase() || "USDT";
+  const total = +$("rep").value || 0, cyc = Math.max(5, +$("cyc").value || 15);
+  if (!raw) { $("status").textContent = "Symbol टाका."; showLTP(null, "--"); running = false; return; }
+  $("out").innerHTML = '<div class="glass-card p-8 text-center text-binance-gold font-mono text-sm">डेटा लोड होत आहे...</div>';
+  $("status").textContent = "तपासत आहे...";
+
+  const A = { fs: resolve(raw, q, "futures"), ss: resolve(raw, q, "spot") };
+  [A.fa, A.sa] = await Promise.all([avail("futures", A.fs), avail("spot", A.ss)]);
+  if (my !== token) return;
+  if (!A.fa && !A.sa) { $("status").textContent = "❌ Symbol सापडला नाही किंवा API ब्लॉक आहे."; showLTP(null, raw + q); running = false; return; }
+
+  let n = 0;
+  while (running && my === token && (total === 0 || n < total)) {
+    n++; const t0 = Date.now();
+    try { $("status").textContent = `Run #${n} चालू आहे...`; await runOnce(n, A, my); }
+    catch (e) { if (my === token) $("status").textContent = "❌ एरर: " + e.message; }
+    if (total && n >= total) break;
+    const end = t0 + cyc * 1000;
+    while (running && my === token && Date.now() < end) {
+      $("status").textContent = `✅ ${raw} | Run #${n}/${total || "∞"} | पुढचा Run: ${Math.max(0, (end - Date.now()) / 1000).toFixed(0)}s`;
+      await sleep(500);
+    }
+  }
+  if (my === token) { $("status").textContent = running ? "🏁 सर्व Runs पूर्ण." : "🛑 थांबवले."; running = false; }
+}
+
+/* ================= EVENTS ================= */
+$("go").onclick = () => { saveSet(); unlockAudio(); loop(); };
+$("stop").onclick = () => { running = false; $("status").textContent = "🛑 स्कॅनर थांबवला."; };
+$("add").onclick = () => {
+  const s = $("sym").value.trim().toUpperCase();
+  if (s && !DEF.includes(s) && !chips.includes(s)) { chips.push(s); store.set("chips", chips); showToast(`${s} Watchlist मध्ये जोडला.`, "success"); }
+  renderChips();
+};
+$("sndToggleBtn").onclick = () => {
+  sndEnabled = !sndEnabled;
+  $("sndIconOn").classList.toggle("hidden", !sndEnabled); $("sndIconOff").classList.toggle("hidden", sndEnabled);
+  showToast(sndEnabled ? "आवाज चालू केला 🔔" : "आवाज बंद केला 🔕");
+};
+$("wkToggleBtn").onclick = () => { wake(); showToast("Screen awake चालू ☀️"); };
+$("settingsBtn").onclick = openSettings;
+$("closeSettings").onclick = closeSettings;
+$("resetSettings").onclick = resetSettings;
+$("saveSettings").onclick = () => {
+  if (!validSettings()) { $("settingsMsg").textContent = "❌ तपासा: BUY RSI > SELL RSI, MACD Fast < Slow, STRONG Score > BUY Score."; return; }
+  $("settingsMsg").textContent = "✅ Settings saved.";
+  setTimeout(() => { closeSettings(); if (running) loop(); }, 500);
+};
+
+/* Trade TF बदलला तर लगेच नवा plan */
+$("ttfSel").value = store.get("ttf", "1h");
+$("ttfSel").onchange = () => {
+  store.set("ttf", $("ttfSel").value);
+  if (lastD) renderFinal(applyConfirm(computeFinal(lastD), false));
+};
+/* Capital / Risk लक्षात ठेवा + plan qty अपडेट */
+["calcCap", "calcRiskPct"].forEach(k => {
+  $(k).value = store.get(k, $(k).value);
+  $(k).addEventListener("change", () => { store.set(k, $(k).value); if (lastF) renderPlan(lastF, computePlan(lastF, lastD)); });
+});
+
+/* ================= LIVE CHARTS ================= */
+const CH_TFS = ["1m", "5m", "1h", "4h"], CH_IST = 19800, chObj = {};
+let chKey = "", chTimer = null, chBusy = false, chBuilt = false;
+
+function chTarget() { if (!lastA) return null; return lastA.fa ? { m:"futures", s:lastA.fs, label:"FUTURES" } : { m:"spot", s:lastA.ss, label:"SPOT" }; }
+function ensureCharts() {
+  if (chBuilt) return true;
+  if (!window.LightweightCharts) return false;
+  const grid = $("chartGrid"); grid.innerHTML = "";
+  const cols = ["#F0B90B", "#3B82F6", "#A855F7"];
+  CH_TFS.forEach(tf => {
+    const card = document.createElement("div");
+    card.className = "glass-card rounded-xl p-2 space-y-1";
+    card.innerHTML = `<div class="flex items-center justify-between px-1"><span class="text-xs font-extrabold text-binance-gold font-mono">${tf.toUpperCase()}</span><span id="chInfo_${tf}" class="text-[10px] font-mono text-binance-muted">--</span></div><div id="chBox_${tf}" style="height:300px"></div>`;
+    grid.appendChild(card);
+    const chart = LightweightCharts.createChart(card.querySelector("#chBox_" + tf), {
+      autoSize: true, layout: { background: { color: "transparent" }, textColor: "#848E9C" },
+      grid: { vertLines: { color: "rgba(43,49,58,0.5)" }, horzLines: { color: "rgba(43,49,58,0.5)" } },
+      rightPriceScale: { borderColor: "#2B313A" }, timeScale: { borderColor: "#2B313A", timeVisible: true, secondsVisible: false }, crosshair: { mode: 0 }
+    });
+    const candle = chart.addCandlestickSeries({ upColor:"#0ECB81", downColor:"#F6465D", borderVisible:false, wickUpColor:"#0ECB81", wickDownColor:"#F6465D" });
+    const lines = cols.map(c => chart.addLineSeries({ color:c, lineWidth:1, priceLineVisible:false, lastValueVisible:false, crosshairMarkerVisible:false }));
+    chObj[tf] = { chart, candle, lines, pl: [] };
+  });
+  chBuilt = true; return true;
+}
+function chLegend() {
+  $("chartLegend").innerHTML = [[C.EF, "#F0B90B"], [C.EM, "#3B82F6"], [C.ES, "#A855F7"]].map(([p, c]) =>
+    `<span class="flex items-center gap-1"><span style="width:14px;height:2px;background:${c};display:inline-block"></span>EMA ${p}</span>`).join("")
+    + `<span class="text-binance-muted">┄ Entry/SL/TP</span>`;
+}
+function chDrawPlan() {
+  if (!chBuilt) return;
+  CH_TFS.forEach(tf => {
+    const o = chObj[tf]; if (!o) return;
+    o.pl.forEach(l => { try { o.candle.removePriceLine(l); } catch (e) {} }); o.pl = [];
+    if (!lastPlan) return;
+    const add = (price, color, title) => o.pl.push(o.candle.createPriceLine({ price, color, lineWidth: 1, lineStyle: 2, axisLabelVisible: true, title }));
+    add(lastPlan.entry, "#F0B90B", "ENTRY"); add(lastPlan.sl, "#F6465D", "SL");
+    lastPlan.tp.forEach((p, i) => add(p, "#0ECB81", "TP" + (i + 1)));
+  });
+}
+async function chLoad(tf, t, first) {
+  const d = await jget(`${base(t.m)}klines?symbol=${t.s}&interval=${tf}&limit=500`);
+  const o = chObj[tf];
+  const cs = d.map(k => ({ time: Math.floor(k[0] / 1000) + CH_IST, open:+k[1], high:+k[2], low:+k[3], close:+k[4] }));
+  const cl = cs.map(x => x.close), n = cs.length, periods = [C.EF, C.EM, C.ES];
+  const emas = periods.map(p => emaS(cl, p)), use = periods.map(p => n >= p);
+  if (first) {
+    o.candle.setData(cs);
+    emas.forEach((e, i) => o.lines[i].setData(use[i] ? e.map((v, j) => ({ time: cs[j].time, value: v })) : []));
+    o.chart.timeScale().setVisibleLogicalRange({ from: Math.max(0, n - 120), to: n + 5 });
+  } else {
+    for (let j = Math.max(0, n - 2); j < n; j++) {
+      o.candle.update(cs[j]);
+      emas.forEach((e, i) => { if (use[i]) o.lines[i].update({ time: cs[j].time, value: e[j] }); });
+    }
+  }
+  const last = cs[n - 1];
+  $("chInfo_" + tf).innerHTML = `<span class="${last.close >= last.open ? "text-binance-green" : "text-binance-red"} font-bold">${fmtP(last.close)}</span>`;
+}
+async function chRefresh() {
+  if (chBusy) return;
+  const t = chTarget(), msg = $("chartMsg");
+  if (!t) { msg.textContent = "आधी 'स्कॅन सुरू करा' दाबा."; return; }
+  if (!ensureCharts()) { msg.textContent = "❌ Chart library लोड झाली नाही (इंटरनेट तपासा)."; return; }
+  chLegend(); $("chartSym").textContent = `${t.s} · ${t.label}`;
+  const key = t.m + t.s + [C.EF, C.EM, C.ES].join("-"), first = key !== chKey;
+  chBusy = true;
+  try { await Promise.all(CH_TFS.map(tf => chLoad(tf, t, first))); chKey = key; chDrawPlan(); msg.textContent = "● Live (दर 5s ला अपडेट)"; }
+  catch (e) { msg.textContent = "❌ डेटा मिळाला नाही, पुन्हा प्रयत्न करत आहे..."; }
+  finally { chBusy = false; }
+}
+function chartsShow() { chRefresh(); clearInterval(chTimer); chTimer = setInterval(chRefresh, 5000); }
+function chartsHide() { clearInterval(chTimer); chTimer = null; }
+
+/* ================= TABS ================= */
+const tabs = [
+  { btn:"tabMtfBtn", content:"tabMtf" }, { btn:"tabChartsBtn", content:"tabCharts" }, { btn:"tabObBtn", content:"tabOb" },
+  { btn:"tabCalcBtn", content:"tabCalc" }, { btn:"tabLogBtn", content:"tabLog" }
+];
+tabs.forEach(t => {
+  $(t.btn).onclick = () => {
+    tabs.forEach(x => { $(x.content).classList.add("hidden"); $(x.btn).className = "tab-btn px-4 py-2.5 text-binance-muted hover:text-white font-medium whitespace-nowrap"; });
+    $(t.content).classList.remove("hidden");
+    if (t.content === "tabCharts") chartsShow(); else chartsHide();
+    if (t.content === "tabLog") renderLog();
+    $(t.btn).className = "tab-btn px-4 py-2.5 text-binance-gold border-b-2 border-binance-gold font-extrabold whitespace-nowrap";
+  };
+});
+
+/* ================= CALCULATOR ================= */
+$("calcComputeBtn").onclick = () => {
+  const cap = +$("calcCap").value || 0, riskPct = +$("calcRiskPct").value || 0, entry = +$("calcEntry").value || 0, sl = +$("calcSl").value || 0;
+  if (!cap || !entry || !sl || entry === sl) { showToast("कृपया योग्य Entry आणि Stop Loss टाका.", "error"); return; }
+  const riskAmt = cap * (riskPct / 100), coins = riskAmt / Math.abs(entry - sl), totalVal = coins * entry;
+  $("calcRiskAmt").textContent = "$" + fx(riskAmt);
+  $("calcCoinQty").textContent = coins >= 100 ? fx(coins, 1) : coins.toFixed(4);
+  $("calcTotalVal").textContent = "$" + fx(totalVal);
+  $("calcLev").textContent = fx(totalVal / cap, 1) + "x";
+  $("calcOut").classList.remove("hidden");
+};
+
+/* ================= LIVE LTP (1 सेकंद) ================= */
+let ltpBusy = false;
+setInterval(async () => {
+  if (!running || !lastA || ltpBusy) return;
+  const A = lastA, m = A.fa ? "futures" : "spot", sym = A.fa ? A.fs : A.ss;
+  ltpBusy = true;
+  try { const d = await jget(base(m) + "ticker/price?symbol=" + sym); if (running && lastA === A) showLTP(+d.price, sym); } catch (e) {}
+  ltpBusy = false;
+}, 1000);
+
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && running) wake(); });
+
+/* INIT */
+loadSet();
+renderChips();
+renderLog();
+</script>
+</body>
+</html>
