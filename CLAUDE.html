@@ -171,8 +171,8 @@ body { background-color:#0B0E11; color:#EAECEF; font-family:'Inter',sans-serif; 
     <div class="flex items-center justify-between gap-2 flex-wrap border-b border-binance-cardBorder pb-2">
       <h3 class="text-sm font-extrabold text-binance-gold">🎯 Trade Plan (Entry · Stop Loss · Target)</h3>
       <div class="flex items-center gap-1.5 text-xs">
-        <span class="text-binance-muted">Trade TF</span>
-        <select id="ttfSel" class="bg-binance-cardBg border border-binance-cardBorder rounded-lg px-2 py-1 text-white font-mono font-bold outline-none">
+        <span class="text-binance-muted">Trade TF: 5m</span>
+        <select id="ttfSel" style="display:none" class="bg-binance-cardBg border border-binance-cardBorder rounded-lg px-2 py-1 text-white font-mono font-bold outline-none">
           <option value="15m">15m (Scalp)</option>
           <option value="1h" selected>1h (Intraday)</option>
           <option value="4h">4h (Swing)</option>
@@ -620,7 +620,7 @@ function applyConfirm(f, bump) {
 /* ================= TRADE PLAN ================= */
 function computePlan(f, d) {
   if (!d) return null;
-  const act = d.fa ? d.fm : d.sm, t = act[f.ttf.toUpperCase()];
+  const act = d.fa ? d.fm : d.sm, t = act["5M"];
   if (!t || !d.px || !t.atr) return null;
   const px = d.px, atr = t.atr;
   if (f.v === "BUY" || f.v === "SELL") {
@@ -717,8 +717,6 @@ function renderFinal(f) {
   lastPlan = plan && plan.dir !== "WAIT" ? plan : null;
   renderPlan(f, plan);
   chDrawPlan();
-  applySignalTheme(f.v === "WAIT" ? "NEUTRAL" : f.v);
-  updateTabTitleAndFavicon(f.v, f.label, lastD ? lastD.px : null, lastD ? lastD.sym : "");
 }
 
 function updateTabTitleAndFavicon(v, label, px, sym) {
@@ -810,6 +808,11 @@ async function runOnce(n, A, my) {
   const [ov, owhy, oconf] = verdictOld(d), [nv, nwhy, nconf] = verdictNew(d);
   setVerdictBox("ov", ov, owhy, oconf);
   setVerdictBox("nv", nv, nwhy, nconf);
+
+  // Theme + browser tab follow NEW SIGNAL only. FINAL calculation remains unchanged.
+  const themeSignal = nv === "BUY" || nv === "SELL" ? nv : "NEUTRAL";
+  applySignalTheme(themeSignal);
+  updateTabTitleAndFavicon(themeSignal, `NEW SIGNAL ${themeSignal}`, d.px, sym);
 
   const f = applyConfirm(computeFinal(d), true);
   renderFinal(f);
