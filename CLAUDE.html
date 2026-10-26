@@ -7,7 +7,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lightweight-charts/4.1.3/lightweight-charts.standalone.production.js" onerror="var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js';document.head.appendChild(s);"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script>
   tailwind.config = {
@@ -39,7 +39,7 @@ body { background-color:#0B0E11; color:#EAECEF; font-family:'Inter',sans-serif; 
 }
 </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between selection:bg-binance-gold selection:text-black pb-16 md:pb-6">
+<body class="min-h-screen flex flex-col justify-between selection:bg-binance-gold selection:text-black pb-8 md:pb-6">
 
 <!-- PASSWORD GATE -->
 <div id="pwGate" style="position:fixed;inset:0;z-index:100;background:#0B0E11;display:flex;align-items:center;justify-content:center;padding:1rem;">
@@ -55,19 +55,16 @@ body { background-color:#0B0E11; color:#EAECEF; font-family:'Inter',sans-serif; 
   </div>
 </div>
 
-<!-- HEADER -->
+<!-- HEADER (Cleaned: Subtitle removed) -->
 <header class="relative bg-binance-darkBg border-b border-binance-cardBorder px-3 py-2.5 sm:px-6">
   <div class="max-w-7xl mx-auto flex items-center justify-between gap-2">
     <div class="flex items-center gap-2.5">
       <div class="w-9 h-9 rounded-xl bg-binance-gold/10 border border-binance-gold/30 flex items-center justify-center">
         <svg class="w-6 h-6 text-binance-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
-      <div>
-        <div class="flex items-center gap-1.5">
-          <h1 class="text-base sm:text-lg font-black tracking-wider text-white font-mono uppercase">KBTIGERS <span class="text-binance-gold">MTF PRO</span></h1>
-          <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-extrabold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 pulse-live"></span> LIVE v4</span>
-        </div>
-        <p class="text-[10px] text-binance-muted -mt-0.5 hidden sm:block">Weighted MTF Signal • Entry / SL / Target Engine</p>
+      <div class="flex items-center gap-1.5">
+        <h1 class="text-base sm:text-lg font-black tracking-wider text-white font-mono uppercase">KBTIGERS <span class="text-binance-gold">MTF PRO</span></h1>
+        <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-extrabold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 pulse-live"></span> LIVE v4</span>
       </div>
     </div>
     <div class="flex items-center gap-1.5 sm:gap-2">
@@ -86,19 +83,26 @@ body { background-color:#0B0E11; color:#EAECEF; font-family:'Inter',sans-serif; 
   </div>
 </header>
 
-<main class="max-w-7xl mx-auto px-2.5 sm:px-6 py-3 space-y-3.5 flex-1 w-full">
+<main class="max-w-7xl mx-auto px-2.5 sm:px-6 py-2.5 space-y-3 flex-1 w-full">
 
-  <!-- WATCHLIST -->
-  <div class="space-y-1.5">
-    <div class="flex items-center justify-between px-1">
-      <span class="text-[11px] font-bold uppercase text-binance-muted tracking-wider">Quick Watchlist</span>
-      <span class="text-[10px] text-gray-500">1-Tap Select</span>
-    </div>
-    <div id="chips" class="flex items-center gap-1.5 overflow-x-auto pb-1.5 text-xs"></div>
+  <!-- WATCHLIST CHIPS ROW (Quick Watchlist row removed; Search button replaces XRP) -->
+  <div class="flex items-center gap-1.5 overflow-x-auto py-1 text-xs no-scrollbar">
+    <div id="chips" class="flex items-center gap-1.5 shrink-0"></div>
+    <button id="searchToggleBtn" class="px-3 py-1.5 rounded-lg border text-xs font-bold font-mono transition flex items-center gap-1.5 bg-binance-gold/15 text-binance-gold border-binance-gold/40 hover:bg-binance-gold/25 shrink-0">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      <span>सर्च सिम्बॉल / कंट्रोल</span>
+    </button>
   </div>
 
-  <!-- CONTROL PANEL -->
-  <div class="glass-card p-3 sm:p-4 rounded-xl space-y-3">
+  <!-- CONTROL PANEL (Hidden by default; opens on Search click, auto-hides on START) -->
+  <div id="controlPanel" class="hidden glass-card p-3 sm:p-4 rounded-xl space-y-3 border border-binance-gold/30">
+    <div class="flex items-center justify-between border-b border-binance-cardBorder/60 pb-2">
+      <div class="text-xs font-bold text-binance-gold uppercase tracking-wider flex items-center gap-1.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+        <span>स्कॅनर कंट्रोल पॅनेल</span>
+      </div>
+      <button id="closeControlBtn" class="text-binance-muted hover:text-white text-xs px-2 py-0.5 rounded bg-binance-cardBg">✕ बंद करा</button>
+    </div>
     <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-3">
       <div><label class="block text-[11px] font-semibold text-binance-muted mb-1">Symbol</label>
         <input id="sym" type="text" value="BTC" class="w-full bg-binance-cardBg border border-binance-cardBorder focus:border-binance-gold text-white font-mono font-bold text-sm rounded-lg p-2.5 outline-none uppercase"></div>
@@ -113,9 +117,9 @@ body { background-color:#0B0E11; color:#EAECEF; font-family:'Inter',sans-serif; 
       </div>
     </div>
     <div class="grid grid-cols-3 gap-2 pt-1">
-      <button id="go" class="col-span-2 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-black font-extrabold text-sm sm:text-base py-3 px-4 rounded-xl active:scale-95 transition flex items-center justify-center gap-2">
+      <button id="go" class="col-span-2 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-black font-extrabold text-sm sm:text-base py-2.5 px-4 rounded-xl active:scale-95 transition flex items-center justify-center gap-2 shadow-lg">
         <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><span>स्कॅन सुरू करा (START)</span></button>
-      <button id="stop" class="bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-rose-400 text-white font-extrabold text-sm sm:text-base py-3 px-4 rounded-xl active:scale-95 transition flex items-center justify-center gap-1.5">
+      <button id="stop" class="bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-rose-400 text-white font-extrabold text-sm sm:text-base py-2.5 px-4 rounded-xl active:scale-95 transition flex items-center justify-center gap-1.5">
         <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M6 6h12v12H6z"/></svg><span>थांबवा</span></button>
     </div>
     <div id="status" class="text-xs font-mono font-medium text-binance-gold bg-binance-gold/5 border border-binance-gold/20 rounded-lg px-3 py-2 text-center">Symbol टाका आणि START बटण दाबा.</div>
@@ -123,16 +127,16 @@ body { background-color:#0B0E11; color:#EAECEF; font-family:'Inter',sans-serif; 
 
   <!-- STICKY BAR -->
   <div id="stickyBar" class="sticky top-0 z-40 -mx-2.5 sm:-mx-6 px-2.5 sm:px-6 py-2 space-y-2 bg-binance-darkBg border-b border-binance-cardBorder shadow-lg">
-    <div id="ltpBox" class="glass-card rounded-2xl p-3 sm:p-4 transition-all duration-300 relative overflow-hidden">
+    <div id="ltpBox" class="glass-card rounded-2xl p-2.5 sm:p-3.5 transition-all duration-300 relative overflow-hidden">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div>
           <div class="flex items-center gap-2">
             <span id="ltpSym" class="text-xs sm:text-sm font-bold tracking-wider text-binance-muted uppercase font-mono">--</span>
             <span id="marketBadge" class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-binance-cardBorder text-gray-300">--</span>
           </div>
-          <div id="ltp" class="text-3xl sm:text-5xl font-black font-mono text-binance-gold tracking-tight my-1">--</div>
+          <div id="ltp" class="text-2xl sm:text-4xl font-black font-mono text-binance-gold tracking-tight my-0.5">--</div>
         </div>
-        <div class="grid grid-cols-3 gap-2 sm:gap-4 bg-binance-cardBg/60 p-2.5 sm:p-3 rounded-xl border border-binance-cardBorder/60">
+        <div class="grid grid-cols-3 gap-2 sm:gap-4 bg-binance-cardBg/60 p-2 sm:p-2.5 rounded-xl border border-binance-cardBorder/60">
           <div><div class="text-[10px] text-binance-muted uppercase font-semibold">24H CHANGE</div><div id="ltpChange" class="text-xs sm:text-sm font-extrabold font-mono text-gray-300">--</div></div>
           <div><div class="text-[10px] text-binance-muted uppercase font-semibold">24H %</div><div id="ltpChangePct" class="text-xs sm:text-sm font-extrabold font-mono text-gray-300">--</div></div>
           <div><div class="text-[10px] text-binance-muted uppercase font-semibold">24H VOL</div><div id="ltpVol" class="text-xs sm:text-sm font-extrabold font-mono text-binance-gold">--</div></div>
@@ -140,66 +144,85 @@ body { background-color:#0B0E11; color:#EAECEF; font-family:'Inter',sans-serif; 
       </div>
     </div>
 
-    <!-- FINAL SIGNAL -->
+    <!-- 2 SIGNALS DISPLAY (NEW & FINAL - OLD REMOVED) -->
     <div id="verdictBanner" class="hidden glass-card rounded-xl p-2.5 sm:p-3 border-l-4" style="border-left-color:#F0B90B">
       <div class="flex flex-wrap items-center justify-between gap-2">
         <div class="flex items-center gap-2 flex-wrap">
-          <span class="text-[10px] font-black text-binance-muted uppercase tracking-wider">FINAL</span>
-          <span id="fvText" class="text-xl sm:text-3xl font-black font-mono px-2.5 py-0.5 rounded-lg uppercase">WAIT</span>
+          <span class="text-[10px] font-black text-binance-muted uppercase tracking-wider">🎯 FINAL ACTION</span>
+          <span id="fvText" class="text-lg sm:text-2xl font-black font-mono px-2.5 py-0.5 rounded-lg uppercase">WAIT</span>
           <span id="fvScore" class="text-[11px] font-extrabold font-mono px-1.5 py-0.5 rounded bg-binance-cardBg text-gray-200 border border-binance-cardBorder">Score --</span>
           <span id="fvConfirm" class="hidden"></span>
         </div>
-        <div class="flex items-center gap-1 text-[10px] font-mono flex-wrap">
-          <span class="text-binance-muted">OLD</span>
-          <span id="ovText" class="px-1.5 py-0.5 rounded font-extrabold">--</span>
-          <span id="ovConf" class="text-gray-400">--</span>
-          <span class="text-binance-muted ml-2">NEW</span>
-          <span id="nvText" class="px-1.5 py-0.5 rounded font-extrabold">--</span>
-          <span id="nvConf" class="text-gray-400">--</span>
+        <div class="flex items-center gap-2 text-xs font-mono flex-wrap bg-binance-cardBg/90 px-3 py-1 rounded-lg border border-binance-cardBorder">
+          <span class="text-binance-muted font-bold text-[11px]">⚡ NEW SIGNAL:</span>
+          <span id="nvText" class="px-2 py-0.5 rounded font-extrabold" title="बहुमत-आधारित Trend Count">--</span>
+          <span id="nvConf" class="text-gray-300 font-bold">--</span>
         </div>
       </div>
-      <div class="mt-2 h-2 bg-binance-cardBg rounded-full relative overflow-hidden border border-binance-cardBorder">
+      <div class="mt-2 h-1.5 bg-binance-cardBg rounded-full relative overflow-hidden border border-binance-cardBorder">
         <div class="absolute top-0 bottom-0 w-px bg-gray-500" style="left:50%"></div>
         <div id="fvBar" class="absolute top-0 bottom-0 transition-all duration-500" style="left:50%;width:0"></div>
       </div>
-      <div class="flex justify-between text-[9px] font-mono text-binance-muted mt-0.5"><span>-100 SELL</span><span>0</span><span>BUY +100</span></div>
     </div>
   </div>
 
-  <!-- TRADE PLAN -->
-  <div id="planCard" class="hidden glass-card rounded-xl p-3 sm:p-4 space-y-3">
+  <!-- TRADE PLAN & LOCK ENGINE -->
+  <div id="planCard" class="hidden glass-card rounded-xl p-3 sm:p-4 space-y-2.5">
     <div class="flex items-center justify-between gap-2 flex-wrap border-b border-binance-cardBorder pb-2">
-      <h3 class="text-sm font-extrabold text-binance-gold">🎯 Trade Plan (Entry · Stop Loss · Target)</h3>
-      <div class="flex items-center gap-1.5 text-xs">
-        <span class="text-binance-muted">Trade TF: 5m</span>
-        <select id="ttfSel" style="display:none" class="bg-binance-cardBg border border-binance-cardBorder rounded-lg px-2 py-1 text-white font-mono font-bold outline-none">
-          <option value="15m">15m (Scalp)</option>
-          <option value="1h" selected>1h (Intraday)</option>
-          <option value="4h">4h (Swing)</option>
-        </select>
+      <div class="flex items-center gap-2">
+        <h3 class="text-xs sm:text-sm font-extrabold text-binance-gold flex items-center gap-1.5">
+          <span>🎯 Trade Plan & Auto-Execution Engine</span>
+        </h3>
+        <span id="activeTradeIndicator" class="hidden px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 animate-pulse">LOCKED</span>
+      </div>
+
+      <!-- Controls: Auto-Lock, Target Exit, Trade Timeframe -->
+      <div class="flex items-center gap-2 flex-wrap">
+        <label class="flex items-center gap-1.5 text-xs text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/30 px-2 py-1 rounded-lg cursor-pointer">
+          <input type="checkbox" id="autoLockToggle" checked class="accent-emerald-500">
+          <span>🤖 Auto-Lock Trade</span>
+        </label>
+        <div class="flex items-center gap-1.5 text-xs">
+          <label for="targetExitSel" class="text-binance-muted font-bold text-[11px]">Exit On:</label>
+          <select id="targetExitSel" class="bg-binance-cardBg border border-binance-cardBorder rounded-lg px-2 py-1 text-white font-mono font-bold text-xs outline-none focus:border-binance-gold cursor-pointer">
+            <option value="TP1" selected>Target 1 (1R)</option>
+            <option value="TP2">Target 2 (2R)</option>
+            <option value="TP3">Target 3 (3R)</option>
+          </select>
+        </div>
+        <div class="flex items-center gap-1.5 text-xs">
+          <label for="ttfSel" class="text-binance-muted font-bold text-[11px]">Trade TF:</label>
+          <select id="ttfSel" class="bg-binance-cardBg border border-binance-cardBorder rounded-lg px-2 py-1 text-white font-mono font-bold text-xs outline-none focus:border-binance-gold cursor-pointer">
+            <option value="1m">1m (Scalp 1m)</option>
+            <option value="5m" selected>5m (Scalp 5m)</option>
+            <option value="15m">15m (Short 15m)</option>
+            <option value="1h">1h (Intraday 1h)</option>
+            <option value="4h">4h (Swing 4h)</option>
+            <option value="1d">1d (Daily 1d)</option>
+          </select>
+        </div>
       </div>
     </div>
+
+    <!-- Trade Plan Body (Shows exactly ONE single locked trade card or setup) -->
     <div id="planBody"></div>
     <div id="planNotes" class="text-[11px] text-gray-300 space-y-0.5 leading-snug"></div>
   </div>
 
-  <!-- TABS -->
+  <!-- TABS (Reordered: 1. Live Charts, 2. MTF Matrix, 3. Order Book, 4. Entry SL Log, 5. Signal History) -->
   <div class="space-y-3">
-    <div class="flex border-b border-binance-cardBorder text-xs sm:text-sm font-bold gap-2 overflow-x-auto">
-      <button id="tabMtfBtn" class="tab-btn px-4 py-2.5 text-binance-gold border-b-2 border-binance-gold font-extrabold whitespace-nowrap">📊 MTF Signal Matrix</button>
-      <button id="tabChartsBtn" class="tab-btn px-4 py-2.5 text-binance-muted hover:text-white font-medium whitespace-nowrap">📈 Live Charts</button>
+    <div class="flex border-b border-binance-cardBorder text-xs sm:text-sm font-bold gap-2 overflow-x-auto no-scrollbar">
+      <button id="tabChartsBtn" class="tab-btn px-4 py-2.5 text-binance-gold border-b-2 border-binance-gold font-extrabold whitespace-nowrap">📈 Live Charts</button>
+      <button id="tabMtfBtn" class="tab-btn px-4 py-2.5 text-binance-muted hover:text-white font-medium whitespace-nowrap">📊 MTF Signal Matrix</button>
       <button id="tabObBtn" class="tab-btn px-4 py-2.5 text-binance-muted hover:text-white font-medium whitespace-nowrap">📚 Order Book</button>
-      <button id="tabCalcBtn" class="tab-btn px-4 py-2.5 text-binance-muted hover:text-white font-medium whitespace-nowrap">🧮 Risk Calc</button>
-      <button id="tabLogBtn" class="tab-btn px-4 py-2.5 text-binance-muted hover:text-white font-medium whitespace-nowrap">📜 Signal Log</button>
+      <button id="tabEntrySlLogBtn" class="tab-btn px-4 py-2.5 text-binance-muted hover:text-white font-medium whitespace-nowrap">🎯 Entry SL Log</button>
+      <button id="tabLogBtn" class="tab-btn px-4 py-2.5 text-binance-muted hover:text-white font-medium whitespace-nowrap">📜 Signal History</button>
     </div>
 
-    <div id="tabMtf" class="tab-content space-y-3">
-      <div id="out" class="space-y-3"><div class="glass-card p-8 text-center text-binance-muted rounded-xl text-xs sm:text-sm">तपासणी सुरू करण्यासाठी 'स्कॅन सुरू करा' वर क्लिक करा.</div></div>
-    </div>
-
-    <div id="tabCharts" class="tab-content hidden space-y-3">
+    <!-- TAB 1: LIVE CHARTS (FIRST TAB) -->
+    <div id="tabCharts" class="tab-content space-y-3">
       <div class="glass-card p-3 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
-        <div class="flex items-center gap-2"><span id="chartSym" class="font-extrabold text-binance-gold">--</span><span id="chartMsg" class="text-binance-muted">आधी 'स्कॅन सुरू करा' दाबा.</span></div>
+        <div class="flex items-center gap-2"><span id="chartSym" class="font-extrabold text-binance-gold">--</span><span id="chartMsg" class="text-binance-muted">स्कॅनर चालू करा.</span></div>
         <div id="chartLegend" class="flex items-center gap-3"></div>
       </div>
       <div id="chartGrid" class="grid grid-cols-1 lg:grid-cols-2 gap-3">
@@ -207,6 +230,12 @@ body { background-color:#0B0E11; color:#EAECEF; font-family:'Inter',sans-serif; 
       </div>
     </div>
 
+    <!-- TAB 2: MTF SIGNAL MATRIX (SECOND TAB) -->
+    <div id="tabMtf" class="tab-content hidden space-y-3">
+      <div id="out" class="space-y-3"><div class="glass-card p-8 text-center text-binance-muted rounded-xl text-xs sm:text-sm">तपासणी सुरू करण्यासाठी 'स्कॅन सुरू करा' वर क्लिक करा.</div></div>
+    </div>
+
+    <!-- TAB 3: ORDER BOOK -->
     <div id="tabOb" class="tab-content hidden space-y-3">
       <div class="glass-card p-4 rounded-xl space-y-4">
         <h3 class="text-sm font-bold text-binance-gold">📚 Bid vs Ask Sentiment Depth</h3>
@@ -214,32 +243,56 @@ body { background-color:#0B0E11; color:#EAECEF; font-family:'Inter',sans-serif; 
       </div>
     </div>
 
-    <div id="tabCalc" class="tab-content hidden space-y-3">
-      <div class="glass-card p-4 sm:p-5 rounded-xl space-y-4 max-w-xl mx-auto">
-        <h3 class="text-sm font-extrabold text-binance-gold border-b border-binance-cardBorder pb-2">🧮 Pro Position Size Calculator</h3>
-        <div class="grid grid-cols-2 gap-3 text-xs">
-          <div><label class="text-binance-muted block mb-1">Capital ($)</label><input id="calcCap" type="number" value="1000" class="w-full bg-binance-cardBg border border-binance-cardBorder rounded-lg p-2 text-white font-mono font-bold"></div>
-          <div><label class="text-binance-muted block mb-1">Risk per Trade (%)</label><input id="calcRiskPct" type="number" value="1" step="0.5" class="w-full bg-binance-cardBg border border-binance-cardBorder rounded-lg p-2 text-white font-mono font-bold"></div>
-          <div><label class="text-binance-muted block mb-1">Entry Price ($)</label><input id="calcEntry" type="number" placeholder="Eg. 65000" class="w-full bg-binance-cardBg border border-binance-cardBorder rounded-lg p-2 text-white font-mono font-bold"></div>
-          <div><label class="text-binance-muted block mb-1">Stop Loss ($)</label><input id="calcSl" type="number" placeholder="Eg. 64000" class="w-full bg-binance-cardBg border border-binance-cardBorder rounded-lg p-2 text-white font-mono font-bold"></div>
+    <!-- TAB 4: ENTRY SL LOG (REPLACES RISK CALCULATOR) -->
+    <div id="tabEntrySlLog" class="tab-content hidden space-y-3">
+      <div class="glass-card p-3 sm:p-4 rounded-xl space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-binance-cardBorder pb-2">
+          <div>
+            <h3 class="text-sm font-extrabold text-binance-gold font-mono flex items-center gap-1.5">
+              <span>🎯 Strategy Entry / Stop Loss / Target Live Performance Log</span>
+            </h3>
+            <p class="text-[11px] text-binance-muted">प्रत्येक locked ट्रेडचा SL किंवा Target गाठल्याचा लाइव्ह ट्रॅकर</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="clearEntrySlLogBtn" class="text-[11px] font-bold px-2.5 py-1 rounded bg-rose-500/10 text-rose-400 border border-rose-500/30 hover:bg-rose-500/20">🗑 Log Clear करा</button>
+          </div>
         </div>
-        <button id="calcComputeBtn" class="w-full bg-binance-gold text-black font-extrabold py-2.5 rounded-lg text-xs uppercase tracking-wider hover:bg-binance-goldHover">Calculate Lot Size</button>
-        <div id="calcOut" class="hidden bg-binance-cardBg p-3 rounded-lg border border-binance-cardBorder text-xs space-y-2 font-mono">
-          <div class="flex justify-between"><span>Max Risk Amount:</span><span id="calcRiskAmt" class="text-rose-400 font-bold">$0.00</span></div>
-          <div class="flex justify-between"><span>Position Size (Coins):</span><span id="calcCoinQty" class="text-binance-gold font-bold">0.00</span></div>
-          <div class="flex justify-between"><span>Total Position Value:</span><span id="calcTotalVal" class="text-emerald-400 font-bold">$0.00</span></div>
-          <div class="flex justify-between"><span>Leverage लागेल (≈):</span><span id="calcLev" class="text-white font-bold">--</span></div>
+
+        <!-- SUMMARY STATS -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <div class="bg-binance-cardBg p-2.5 rounded-lg border border-binance-cardBorder">
+            <div class="text-[10px] text-binance-muted font-bold uppercase">एकूण ट्रेड्स</div>
+            <div id="statTotalTrades" class="text-lg font-black font-mono text-white">0</div>
+          </div>
+          <div class="bg-binance-cardBg p-2.5 rounded-lg border border-binance-cardBorder">
+            <div class="text-[10px] text-emerald-400 font-bold uppercase">TARGET गाठले (WIN)</div>
+            <div id="statWins" class="text-lg font-black font-mono text-emerald-400">0</div>
+          </div>
+          <div class="bg-binance-cardBg p-2.5 rounded-lg border border-binance-cardBorder">
+            <div class="text-[10px] text-rose-400 font-bold uppercase">SL उडाले (LOSS)</div>
+            <div id="statLosses" class="text-lg font-black font-mono text-rose-400">0</div>
+          </div>
+          <div class="bg-binance-cardBg p-2.5 rounded-lg border border-binance-cardBorder">
+            <div class="text-[10px] text-binance-gold font-bold uppercase">WIN RATE</div>
+            <div id="statWinRate" class="text-lg font-black font-mono text-binance-gold">0%</div>
+          </div>
+        </div>
+
+        <!-- TABLE OF CLOSED TRADES -->
+        <div class="overflow-x-auto">
+          <div id="entrySlLogTable"></div>
         </div>
       </div>
     </div>
 
+    <!-- TAB 5: SIGNAL HISTORY -->
     <div id="tabLog" class="tab-content hidden space-y-3">
       <div class="glass-card p-4 rounded-xl overflow-x-auto"><div id="log" class="min-w-[600px] space-y-1"></div></div>
     </div>
   </div>
 </main>
 
-<!-- SETTINGS -->
+<!-- SETTINGS OVERLAY -->
 <div id="settingsOverlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4">
   <div class="bg-binance-darkBg border border-binance-cardBorder w-full max-w-lg rounded-2xl p-4 sm:p-6 shadow-2xl max-h-[90vh] overflow-y-auto space-y-4">
     <div class="flex items-center justify-between border-b border-binance-cardBorder pb-3">
@@ -306,11 +359,6 @@ body { background-color:#0B0E11; color:#EAECEF; font-family:'Inter',sans-serif; 
 
 <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-xs w-full pointer-events-none"></div>
 
-<footer class="max-w-7xl mx-auto px-4 py-3 text-center text-[11px] text-binance-muted border-t border-binance-cardBorder/40 mt-4 space-y-1">
-  <div>KBTIGERS MTF Live Pro Terminal v4 • Powered by Binance Public API</div>
-  <div class="text-[10px] text-gray-500">⚠️ हे फक्त तांत्रिक विश्लेषण आहे, नफ्याची गॅरंटी नाही. नेहमी Stop Loss वापरा.</div>
-</footer>
-
 <script>
 /* PASSWORD GATE */
 const APP_PASSWORD = "111";
@@ -332,7 +380,7 @@ const GATE_KEY = "KBTIGERS - mtf_pro_unlocked";
 </script>
 
 <script>
-/* ================= CONSTANTS ================= */
+/* ================= CONSTANTS & APP STATE ================= */
 const C = {
   EF:20, EM:50, ES:200, RP:14, RB:55, RS:45, MF:12, MS:26, MG:9, SP:10, SM:3,
   DEPTH:50, OBB:1.2, OBS:0.83,
@@ -340,12 +388,12 @@ const C = {
 };
 const C_DEFAULT = {...C};
 const TFS = ["1m","5m","15m","1h","4h","1d","1w"];
-const TF_W = { "1M":0.5, "5M":1, "15M":1.5, "1H":2, "4H":2.5, "1D":3, "1W":2 }; // मोठ्या TF ला जास्त वजन
+const TF_W = { "1M":0.5, "5M":1, "15M":1.5, "1H":2, "4H":2.5, "1D":3, "1W":2 };
 const OB_W = 1;
 
 const $ = id => document.getElementById(id);
 let running = false, token = 0, prevLTP = null, prevLTPSym = null, ac = null, wl = null;
-let prevOV = null, prevNV = null, prevFV = null;
+let prevNV = null, prevFV = null;
 let lastA = null, lastD = null, lastF = null, lastPlan = null;
 let fState = { v:null, count:0 };
 
@@ -353,6 +401,10 @@ const store = {
   get(k, d){ try { const v = localStorage.getItem("mtf_pro_" + k); return v === null ? d : JSON.parse(v); } catch(e){ return d; } },
   set(k, v){ try { localStorage.setItem("mtf_pro_" + k, JSON.stringify(v)); } catch(e){} }
 };
+
+// Active Locked Trade & Entry SL Log
+let lockedTrade = store.get("lockedTrade", null);
+let entrySlLog = store.get("entrySlLog", []);
 
 const fx = (v, d = 2) => Number(v).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
 const fmtP = v => { const p = Math.abs(Number(v)); const d = p >= 1000 ? 2 : p >= 10 ? 3 : p >= 1 ? 4 : p >= 0.01 ? 5 : 8; return fx(v, d); };
@@ -397,7 +449,8 @@ function resetSettings(){ Object.assign(C, C_DEFAULT); store.set("analysisSettin
 loadAnalysisSettings();
 
 /* ================= API ================= */
-const DEF = ["BTC", "ETH", "CL", "XAU", "XAG", "XRP"];
+// XRP replaced with search button. Default chips: BTC, ETH, CL, XAU, XAG
+const DEF = ["BTC", "ETH", "CL", "XAU", "XAG"];
 let chips = store.get("chips", []), logArr = store.get("log3", []);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const FU = "https://fapi.binance.com/fapi/v1/", SPOT = "https://api.binance.com/api/v3/";
@@ -436,7 +489,11 @@ function showLTP(price, sym) {
   }
   el.textContent = "$" + fmtP(p); se.textContent = symbol + " • LIVE";
   prevLTP = p; prevLTPSym = symbol;
+
+  // Realtime Active Locked Trade Check against incoming LTP
+  checkLockedTradeLive(p, symbol);
 }
+
 function show24h(t) {
   if (!t) return;
   const ch = +t.priceChange, pct = +t.priceChangePercent, qv = +t.quoteVolume;
@@ -494,7 +551,6 @@ function adxCalc(h, l, c, p) {
   return adx === null ? null : { adx, pdi, mdi };
 }
 
-/* फक्त बंद झालेल्या candles वर indicators (repaint नाही) */
 async function analyze(m, s, tf) {
   const raw = await klines(m, s, tf);
   if (!raw || raw.length < 31) return null;
@@ -526,7 +582,7 @@ async function analyze(m, s, tf) {
            tfS: b >= 3 ? "BUY" : se >= 3 ? "SELL" : "NEUTRAL" };
 }
 
-/* ================= OLD / NEW (मूळ logic) ================= */
+/* ================= 3 SIGNALS (OLD / NEW / FINAL) ================= */
 function collectSig(d) {
   const sig = [];
   if (d.fob) sig.push(d.fob.sig); else if (d.sob) sig.push(d.sob.sig);
@@ -534,101 +590,79 @@ function collectSig(d) {
   for (const t of TFS) { const r = act[t.toUpperCase()]; if (r) sig.push(r.tfS); }
   return { sig, act };
 }
-function verdictOld(d) {
-  const { sig, act } = collectSig(d);
-  if (!sig.length) return ["NO TRADE", "डेटा उपलब्ध नाही.", "0%"];
-  const b = sig.filter(x => x === "BUY").length, s = sig.filter(x => x === "SELL").length, n = sig.length;
-  const a4 = act["4H"] ? act["4H"].tfS : "NEUTRAL", a1 = act["1D"] ? act["1D"].tfS : "NEUTRAL";
-  if (a1 !== "NEUTRAL" && a4 !== "NEUTRAL" && a1 !== a4) return ["NEUTRAL", `1D ${a1} व 4H ${a4}`, Math.round(Math.max(b, s) / n * 100) + "%"];
-  if (b / n >= 0.6 && s <= 2) return ["BUY", `${b}/${n} BUY`, Math.round(b / n * 100) + "%"];
-  if (s / n >= 0.6 && b <= 2) return ["SELL", `${s}/${n} SELL`, Math.round(s / n * 100) + "%"];
-  const neu = sig.filter(x => x === "NEUTRAL").length;
-  return ["NEUTRAL", `B:${b} S:${s} N:${neu}`, Math.round(Math.max(b, s, neu) / n * 100) + "%"];
-}
+// OLD: Rule based with 4H vs 1D conflict check
+// NEW SIGNAL: Trend majority based
 function verdictNew(d) {
   const { sig } = collectSig(d);
-  if (!sig.length) return ["NO TRADE", "डेटा उपलब्ध नाही.", "0%"];
+  if (!sig.length) return ["NO TRADE", "डेटा उपलब्ध नाही.", "0%", 0, 0];
   const b = sig.filter(x => x === "BUY").length, s = sig.filter(x => x === "SELL").length, n = b + s;
-  if (n === 0) return ["NEUTRAL", "BUY/SELL नाही", "0%"];
-  if (b > s) return ["BUY", `B:${b} S:${s}`, Math.round(b / n * 100) + "%"];
-  if (s > b) return ["SELL", `B:${b} S:${s}`, Math.round(s / n * 100) + "%"];
-  return ["NEUTRAL", `B:${b} S:${s}`, "50%"];
+  if (n === 0) return ["NEUTRAL", "BUY/SELL नाही", "0%", b, s];
+  if (b > s) return ["BUY", `B:${b} S:${s}`, Math.round(b / n * 100) + "%", b, s];
+  if (s > b) return ["SELL", `B:${b} S:${s}`, Math.round(s / n * 100) + "%", b, s];
+  return ["NEUTRAL", `B:${b} S:${s}`, "50%", b, s];
 }
 
-/* ================= FINAL SIGNAL (Weighted + Filters) ================= */
+// FINAL ACTION: Directly driven by NEW SIGNAL (No contradictory blockers!)
 function verdictFinal(d, ttf) {
-  const act = d.fa ? d.fm : d.sm, ob = d.fob || d.sob;
-  let sum = 0, wsum = 0, cnt = 0;
-  for (const tf of TFS) {
-    const r = act[tf.toUpperCase()]; if (!r) continue;
-    const w = TF_W[r.tf] || 1; sum += w * r.score / 4; wsum += w; cnt++;
-  }
-  if (ob) { sum += OB_W * (ob.sig === "BUY" ? 1 : ob.sig === "SELL" ? -1 : 0); wsum += OB_W; }
-  if (!wsum) return { v:"WAIT", label:"NO DATA", score:0, notes:["डेटा उपलब्ध नाही."], ttf };
+  const [nv, nwhy, nconf, b, s] = verdictNew(d);
+  const n = (b || 0) + (s || 0);
 
-  const score = Math.round(sum / wsum * 100);
-  const notes = [];
-  let dir = score >= C.FT ? "BUY" : score <= -C.FT ? "SELL" : "WAIT";
-  let strong = Math.abs(score) >= C.FS;
-  const t = act[ttf.toUpperCase()], h1 = act["1H"], h4 = act["4H"], d1 = act["1D"];
+  if (nv === "BUY") {
+    const score = n > 0 ? Math.round((b / n) * 100) : 60;
+    const isStrong = b >= 4 || score >= 70;
+    return {
+      v: "BUY",
+      label: isStrong ? "STRONG BUY" : "BUY",
+      score: score,
+      notes: [`🟢 NEW SIGNAL BUY: ${b} टाइमफ्रेम्स BUY दिशेत (${nconf}) • LONG ट्रेड सक्रिय केला आहे.`],
+      ttf: ttf
+    };
+  }
 
-  // 1) मोठ्या TF मध्ये कन्फ्लिक्ट
-  if (dir !== "WAIT" && d1 && h4 && d1.tfS !== "NEUTRAL" && h4.tfS !== "NEUTRAL" && d1.tfS !== h4.tfS) {
-    notes.push(`⛔ 1D ${d1.tfS} vs 4H ${h4.tfS} – मोठ्या TF मध्ये कन्फ्लिक्ट`); dir = "WAIT";
+  if (nv === "SELL") {
+    const score = n > 0 ? -Math.round((s / n) * 100) : -60;
+    const isStrong = s >= 4 || Math.abs(score) >= 70;
+    return {
+      v: "SELL",
+      label: isStrong ? "STRONG SELL" : "SELL",
+      score: score,
+      notes: [`🔴 NEW SIGNAL SELL: ${s} टाइमफ्रेम्स SELL दिशेत (${nconf}) • SHORT ट्रेड सक्रिय केला आहे.`],
+      ttf: ttf
+    };
   }
-  // 2) 1H/4H विरुद्ध दिशा
-  if (dir !== "WAIT") {
-    const opp = dir === "BUY" ? "SELL" : "BUY";
-    if ((h4 && h4.tfS === opp) || (h1 && h1.tfS === opp)) { notes.push(`⛔ 1H/4H ट्रेंड ${opp} – विरुद्ध दिशा, थांबा`); dir = "WAIT"; }
-  }
-  // 3) Trade TF SuperTrend दिशेत हवा
-  if (dir !== "WAIT" && t && t.tS !== dir) { notes.push(`⏳ ${t.tf} SuperTrend अजून ${t.tS} – flip ची वाट पहा`); dir = "WAIT"; }
-  // 4) ADX ट्रेंड strength
-  if (dir !== "WAIT" && t && t.adx != null) {
-    if (t.adx < C.ADXMIN) {
-      if (strong) { strong = false; notes.push(`⚠️ ADX ${fx(t.adx,0)} – ट्रेंड कमकुवत (STRONG काढले)`); }
-      else { notes.push(`⛔ ADX ${fx(t.adx,0)} < ${C.ADXMIN} – sideways मार्केट`); dir = "WAIT"; }
-    } else if (t.adx >= 25) notes.push(`✅ ADX ${fx(t.adx,0)} – ट्रेंड मजबूत`);
-  }
-  // 5) RSI extreme
-  if (dir === "BUY" && t && t.r >= 75) { strong = false; notes.push(`⚠️ RSI ${fx(t.r,0)} overbought – pullback zone मध्ये एंट्री चांगली`); }
-  if (dir === "SELL" && t && t.r <= 25) { strong = false; notes.push(`⚠️ RSI ${fx(t.r,0)} oversold – pullback zone मध्ये एंट्री चांगली`); }
-  // 6) Volume
-  if (dir !== "WAIT" && t) {
-    if (t.vr < 0.7) notes.push(`⚠️ ${t.tf} volume सरासरीपेक्षा कमी (${fx(t.vr,2)}x)`);
-    else if (t.vr >= 1.5) notes.push(`✅ ${t.tf} volume spike (${fx(t.vr,2)}x)`);
-  }
-  if (dir !== "WAIT") {
-    const al = TFS.filter(x => act[x.toUpperCase()] && act[x.toUpperCase()].tfS === dir).length;
-    notes.unshift(`✅ ${al}/${cnt} Timeframes ${dir} दिशेत • Score ${score > 0 ? "+" : ""}${score}`);
-  } else if (!notes.length) {
-    notes.push(`⏳ Score ${score > 0 ? "+" : ""}${score} – स्पष्ट दिशा नाही (±${C.FT} हवा)`);
-  }
-  const label = dir === "WAIT" ? "WAIT" : (strong ? "STRONG " : "") + dir;
-  return { v: dir, label, score, notes, ttf };
+
+  return {
+    v: "WAIT",
+    label: "WAIT (NEUTRAL)",
+    score: 0,
+    notes: [`⏳ B:${b} आणि S:${s} समसमान आहेत • स्पष्ट दिशा (BUY किंवा SELL) मिळताच ट्रेड सुरू होईल.`],
+    ttf: ttf
+  };
 }
 
-function computeFinal(d) { return verdictFinal(d, $("ttfSel").value); }
+function computeFinal(d) { return verdictFinal(d, $("ttfSel").value || "5m"); }
 function applyConfirm(f, bump) {
   if (f.v === fState.v) { if (bump) fState.count++; } else { fState.v = f.v; fState.count = 1; }
   f.count = fState.count;
-  f.confirmed = f.v !== "WAIT" && f.count >= C.CONF;
-  f.justConfirmed = bump && f.confirmed && f.count === C.CONF;
+  f.confirmed = f.v !== "WAIT";
+  f.justConfirmed = bump && f.confirmed && f.count === 1;
   return f;
 }
 
-/* ================= TRADE PLAN ================= */
-function computePlan(f, d) {
+/* ================= TRADE PLAN GENERATOR ================= */
+function computePlan(f, d, selTf) {
   if (!d) return null;
-  const act = d.fa ? d.fm : d.sm, t = act["5M"];
+  const act = d.fa ? d.fm : d.sm;
+  const userTf = (selTf || $("ttfSel").value || "5m").toUpperCase();
+  const t = act[userTf] || act["5M"] || act["15M"] || act["1H"];
   if (!t || !d.px || !t.atr) return null;
   const px = d.px, atr = t.atr;
   if (f.v === "BUY" || f.v === "SELL") {
     const s = f.v === "BUY" ? 1 : -1;
     const atrSL = px - s * C.SLM * atr;
     const swSL = s === 1 ? t.swL - 0.2 * atr : t.swH + 0.2 * atr;
-    let sl = s === 1 ? Math.min(atrSL, swSL) : Math.max(atrSL, swSL);   // जो जास्त सुरक्षित
-    const capSL = px - s * 3 * atr;                                     // कमाल 3×ATR
+    let sl = s === 1 ? Math.min(atrSL, swSL) : Math.max(atrSL, swSL);
+    const capSL = px - s * 3 * atr;
     sl = s === 1 ? Math.max(sl, capSL) : Math.min(sl, capSL);
     const risk = Math.abs(px - sl);
     const zoneOk = s === 1 ? t.ef < px : t.ef > px;
@@ -643,45 +677,346 @@ const tile = (lbl, val, sub, cls) => `<div class="bg-binance-cardBg/70 border bo
   <div class="text-sm sm:text-base font-extrabold font-mono ${cls}">${val}</div>
   ${sub ? `<div class="text-[10px] text-gray-400 font-mono leading-tight">${sub}</div>` : ""}</div>`;
 
+/* ================= TRADE LOCK & AUTO-EXECUTION LOGIC ================= */
+let lastClosedTime = 0;
+
+function lockCurrentTrade(plan, sym, isAuto = false) {
+  if (lockedTrade && lockedTrade.status === "OPEN") return;
+  if (!plan || plan.dir === "WAIT") return;
+
+  const targetExit = ($("targetExitSel") && $("targetExitSel").value) || "TP1";
+  const targetPrice = targetExit === "TP3" ? plan.tp[2] : targetExit === "TP2" ? plan.tp[1] : plan.tp[0];
+
+  lockedTrade = {
+    id: Date.now(),
+    sym: sym.toUpperCase(),
+    dir: plan.dir,
+    tf: plan.tf,
+    entry: plan.entry,
+    sl: plan.sl,
+    tp1: plan.tp[0],
+    tp2: plan.tp[1],
+    tp3: plan.tp[2],
+    targetExit: targetExit,
+    targetPrice: targetPrice,
+    risk: plan.risk,
+    openTime: new Date().toLocaleTimeString("en-IN"),
+    tp1Hit: false,
+    tp2Hit: false,
+    status: "OPEN"
+  };
+  store.set("lockedTrade", lockedTrade);
+  synthChime([587, 880, 1174]);
+  showToast(`🔒 <b>${isAuto ? "Auto-Locked" : "Locked"} Trade</b>: ${sym} ${plan.dir} @ $${fmtP(plan.entry)}<br>SL: $${fmtP(plan.sl)} | ${targetExit}: $${fmtP(targetPrice)}`, "success");
+  updateLockedTradeUI();
+  chDrawPlan();
+}
+
+function unlockOrCloseTrade(reason = "MANUAL", finalPrice = null) {
+  if (!lockedTrade) return;
+  const px = finalPrice || prevLTP || lockedTrade.entry;
+  const isBuy = lockedTrade.dir === "BUY";
+  const pts = isBuy ? (px - lockedTrade.entry) : (lockedTrade.entry - px);
+  const rMult = lockedTrade.risk > 0 ? (pts / lockedTrade.risk).toFixed(2) : "0.0";
+
+  let resultLabel = reason;
+  let statusColor = "text-binance-gold";
+  if (reason === "SL_HIT") {
+    resultLabel = "🔴 SL उडाला (SL HIT)";
+    statusColor = "text-rose-400";
+    synthChime([1174, 587, 300]);
+  } else if (reason.includes("TP")) {
+    resultLabel = `🎯 ${reason.replace('_HIT', '')} गाठले (WIN)`;
+    statusColor = "text-emerald-400";
+    synthChime([587, 880, 1318]);
+  } else {
+    resultLabel = "⏹️ Manual Close";
+    statusColor = "text-gray-300";
+  }
+
+  // Log to Entry SL Log table
+  const logItem = {
+    time: new Date().toLocaleTimeString("en-IN"),
+    sym: lockedTrade.sym,
+    tf: lockedTrade.tf,
+    dir: lockedTrade.dir,
+    entry: lockedTrade.entry,
+    exit: px,
+    sl: lockedTrade.sl,
+    tp: lockedTrade.targetPrice || lockedTrade.tp1,
+    result: resultLabel,
+    statusColor: statusColor,
+    pnl: (pts >= 0 ? "+" : "") + rMult + "R (" + (pts >= 0 ? "+" : "") + fmtP(pts) + ")"
+  };
+  entrySlLog.unshift(logItem);
+  entrySlLog = entrySlLog.slice(0, 100);
+  store.set("entrySlLog", entrySlLog);
+
+  showToast(`Trade बंद झाला: <b>${resultLabel}</b> [${logItem.pnl}]<br>नवीन सेटअपची वाट पहा...`, pts >= 0 ? "success" : "error");
+
+  // Prevent immediate re-trigger on the exact same tick
+  fState = { v: null, count: 0 };
+  lastClosedTime = Date.now();
+
+  lockedTrade = null;
+  store.set("lockedTrade", null);
+  updateLockedTradeUI();
+  renderEntrySlLogTable();
+  chDrawPlan();
+
+  if (lastF && lastD) renderPlan(lastF, computePlan(lastF, lastD, $("ttfSel").value));
+}
+
+function checkLockedTradeLive(currentPrice, currentSym) {
+  if (!lockedTrade || lockedTrade.status !== "OPEN") return;
+  if (lockedTrade.sym !== currentSym) return;
+
+  const isBuy = lockedTrade.dir === "BUY";
+  const px = currentPrice;
+  const pts = isBuy ? (px - lockedTrade.entry) : (lockedTrade.entry - px);
+  const rMult = lockedTrade.risk > 0 ? (pts / lockedTrade.risk).toFixed(2) : "0.0";
+
+  // Update Live P&L display in Locked Trade card
+  const pnlEl = $("lockPnlVal");
+  if (pnlEl) {
+    pnlEl.textContent = (pts >= 0 ? "+" : "") + rMult + "R (" + (pts >= 0 ? "+" : "") + fmtP(pts) + ")";
+    pnlEl.className = "text-sm font-bold " + (pts >= 0 ? "text-emerald-400" : "text-rose-400");
+  }
+  const ltpEl = $("lockLtpVal");
+  if (ltpEl) {
+    ltpEl.textContent = "$" + fmtP(px);
+  }
+
+  // 1) Stop Loss Hit check:
+  if ((isBuy && px <= lockedTrade.sl) || (!isBuy && px >= lockedTrade.sl)) {
+    unlockOrCloseTrade("SL_HIT", px);
+    return;
+  }
+
+  // 2) Selected Target Hit check:
+  const targetPx = lockedTrade.targetPrice || lockedTrade.tp1;
+  if ((isBuy && px >= targetPx) || (!isBuy && px <= targetPx)) {
+    unlockOrCloseTrade(lockedTrade.targetExit + "_HIT", px);
+    return;
+  }
+
+  // 3) Intermediate Target milestone triggers:
+  if (isBuy) {
+    if (px >= lockedTrade.tp1 && !lockedTrade.tp1Hit) {
+      lockedTrade.tp1Hit = true;
+      store.set("lockedTrade", lockedTrade);
+      showToast(`🎯 <b>${lockedTrade.sym}</b> Target 1 गाठले!`, "success");
+      $("lockStatusPill").textContent = "Target 1 गाठले 🎯";
+    }
+    if (px >= lockedTrade.tp2 && !lockedTrade.tp2Hit) {
+      lockedTrade.tp2Hit = true;
+      store.set("lockedTrade", lockedTrade);
+      showToast(`🎯 <b>${lockedTrade.sym}</b> Target 2 गाठले!`, "success");
+      $("lockStatusPill").textContent = "Target 2 गाठले 🎯";
+    }
+  } else {
+    if (px <= lockedTrade.tp1 && !lockedTrade.tp1Hit) {
+      lockedTrade.tp1Hit = true;
+      store.set("lockedTrade", lockedTrade);
+      showToast(`🎯 <b>${lockedTrade.sym}</b> Target 1 गाठले!`, "success");
+      $("lockStatusPill").textContent = "Target 1 गाठले 🎯";
+    }
+    if (px <= lockedTrade.tp2 && !lockedTrade.tp2Hit) {
+      lockedTrade.tp2Hit = true;
+      store.set("lockedTrade", lockedTrade);
+      showToast(`🎯 <b>${lockedTrade.sym}</b> Target 2 गाठले!`, "success");
+      $("lockStatusPill").textContent = "Target 2 गाठले 🎯";
+    }
+  }
+}
+
+function updateLockedTradeUI() {
+  const badge = $("activeTradeIndicator");
+  if (!lockedTrade || lockedTrade.status !== "OPEN") {
+    if (badge) badge.classList.add("hidden");
+    return;
+  }
+  if (badge) badge.classList.remove("hidden");
+}
+
 function renderPlan(f, p) {
   $("planCard").classList.remove("hidden");
+  updateLockedTradeUI();
   const body = $("planBody");
+
+  // If a trade is currently locked: DO NOT shift levels on EMA changes! Exactly ONE clean card.
+  if (lockedTrade && lockedTrade.status === "OPEN") {
+    const isBuy = lockedTrade.dir === "BUY";
+    const dirColor = isBuy ? "text-emerald-400" : "text-rose-400";
+    const targetLabel = lockedTrade.targetExit || "TP1";
+    body.innerHTML = `
+      <div class="p-3.5 bg-binance-cardBg/90 rounded-xl border border-binance-gold/40 space-y-3">
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 rounded text-xs font-black bg-emerald-500 text-black uppercase font-mono">🔒 ACTIVE TRADE LOCKED</span>
+            <span class="${dirColor} font-black text-sm uppercase font-mono">${lockedTrade.dir} ${lockedTrade.sym}</span>
+            <span class="text-xs text-binance-muted font-mono">(${lockedTrade.tf})</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-[11px] text-emerald-400 font-mono font-bold flex items-center gap-1.5 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/30">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-live"></span>
+              <span>फिक्स लेव्हल्स लॉक आहेत</span>
+            </span>
+            <button id="planManualCloseBtn" class="text-xs font-extrabold px-3 py-1 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/40 hover:bg-rose-500/30 transition">🔓 Manual Exit</button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs font-mono">
+          <div class="bg-binance-cardBg p-2.5 rounded-lg border border-binance-cardBorder">
+            <div class="text-[10px] text-binance-muted font-bold uppercase">LOCKED ENTRY</div>
+            <div class="text-sm sm:text-base font-extrabold text-binance-gold">$${fmtP(lockedTrade.entry)}</div>
+            <div class="text-[10px] text-gray-400">प्रवेश भाव (Fixed)</div>
+          </div>
+          <div class="bg-binance-cardBg p-2.5 rounded-lg border border-binance-cardBorder">
+            <div class="text-[10px] text-rose-400 font-bold uppercase">STOP LOSS (SL)</div>
+            <div class="text-sm sm:text-base font-extrabold text-rose-400">$${fmtP(lockedTrade.sl)}</div>
+            <div class="text-[10px] text-gray-400">नुकसान मर्यादा (Fixed)</div>
+          </div>
+          <div class="bg-binance-cardBg p-2.5 rounded-lg border border-binance-cardBorder">
+            <div class="text-[10px] text-emerald-400 font-bold uppercase">TARGET (${targetLabel})</div>
+            <div class="text-sm sm:text-base font-extrabold text-emerald-400">$${fmtP(lockedTrade.targetPrice)}</div>
+            <div class="text-[10px] text-gray-400">नफा ध्येय (Fixed)</div>
+          </div>
+          <div class="bg-binance-cardBg p-2.5 rounded-lg border border-binance-cardBorder">
+            <div class="text-[10px] text-binance-muted font-bold uppercase">LIVE PRICE (LTP)</div>
+            <div id="lockLtpVal" class="text-sm sm:text-base font-extrabold text-white">$${fmtP(prevLTP || lockedTrade.entry)}</div>
+            <div class="text-[10px] text-gray-400">चालू भाव</div>
+          </div>
+          <div class="bg-binance-cardBg p-2.5 rounded-lg border border-binance-cardBorder col-span-2 sm:col-span-1">
+            <div class="text-[10px] text-binance-muted font-bold uppercase">LIVE P&L (R:R)</div>
+            <div id="lockPnlVal" class="text-sm sm:text-base font-extrabold text-white">0.0R</div>
+            <div class="text-[10px] text-gray-400">सध्याचा नफा/तोटा</div>
+          </div>
+        </div>
+
+        <div class="text-[11px] text-binance-muted bg-binance-darkBg/60 p-2 rounded-lg border border-binance-cardBorder/60">
+          <span>🎯 <b>ऑटो-क्लोज:</b> भावाने <b>SL ($${fmtP(lockedTrade.sl)})</b> किंवा <b>${targetLabel} ($${fmtP(lockedTrade.targetPrice)})</b> ला स्पर्श करताच ट्रेड आपोआप क्लोज होईल.</span>
+        </div>
+      </div>
+    `;
+
+    const exitBtn = $("planManualCloseBtn");
+    if (exitBtn) exitBtn.onclick = () => { if (confirm("ट्रेड मॅन्युअली क्लोज करायचा आहे का?")) unlockOrCloseTrade("MANUAL_EXIT"); };
+    $("planNotes").innerHTML = `<div class="text-binance-muted">💡 हा ट्रेड पूर्ण होईपर्यंत (SL किंवा TP येईपर्यंत) नवीन ट्रेड घेतला जाणार नाही.</div>`;
+    return;
+  }
+
+  // If NO trade is locked:
   if (!p) {
-    body.innerHTML = '<div class="text-xs text-binance-muted">Trade TF चा डेटा उपलब्ध नाही.</div>';
+    body.innerHTML = '<div class="text-xs text-binance-muted">Trade TF चा डेटा लोड होत आहे...</div>';
   } else if (p.dir === "WAIT") {
-    body.innerHTML = `<div class="text-sm font-bold text-binance-gold mb-2">⏳ WAIT — आत्ता एंट्री घेऊ नका. या लेव्हल्सवर लक्ष ठेवा:</div>
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+    body.innerHTML = `
+      <div class="p-3 bg-binance-cardBg/60 rounded-xl border border-binance-cardBorder text-center space-y-1">
+        <div class="text-sm font-bold text-binance-gold">⏳ NO ACTIVE TRADE — योग्य सेटअपची वाट पहात आहे</div>
+        <div class="text-[11px] text-binance-muted">मार्केटमध्ये स्पष्ट BUY किंवा SELL सिग्नल तयार होताच सिस्टीम आपोआप नवा ट्रेड लॉक करेल.</div>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2">
         ${tile("BUY Trigger ↑", fmtP(p.swH), `${p.tf} swing high वर close`, "text-emerald-400")}
         ${tile("SELL Trigger ↓", fmtP(p.swL), `${p.tf} swing low खाली close`, "text-rose-400")}
         ${tile("SuperTrend", fmtP(p.st), `सध्या ${p.tS}`, p.tS === "BUY" ? "text-emerald-400" : "text-rose-400")}
         ${tile("ATR (" + p.tf + ")", fmtP(p.atr), "सरासरी हालचाल", "text-binance-gold")}
       </div>`;
+    $("planNotes").innerHTML = (f.notes || []).map(n => `<div>${n}</div>`).join("");
   } else {
+    // A fresh setup is available
     const e = p.entry, pc = x => { const v = (x - e) / e * 100; return (v > 0 ? "+" : "") + v.toFixed(2) + "%"; };
-    const cap = +$("calcCap").value || 0, rp = +$("calcRiskPct").value || 0, ra = cap * rp / 100;
-    const qty = p.risk > 0 ? ra / p.risk : 0, pv = qty * e;
     const dirCls = p.dir === "BUY" ? "text-emerald-400" : "text-rose-400";
-    body.innerHTML = `<div class="text-sm font-extrabold mb-2 ${dirCls}">${p.dir === "BUY" ? "🟢 LONG" : "🔴 SHORT"} SETUP • ${p.tf}${f.confirmed ? " • ✔ CONFIRMED" : " • ⏳ पुष्टी होत आहे"}</div>
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-        ${tile("ENTRY (Live)", fmtP(e), p.zone ? `Pullback zone: ${fmtP(p.zone[0])} – ${fmtP(p.zone[1])}` : "Market entry", "text-binance-gold")}
-        ${tile("STOP LOSS", fmtP(p.sl), `${pc(p.sl)} • ${fx(p.risk / p.atr, 1)}×ATR`, "text-rose-400")}
-        ${tile("TARGET 1 (1R)", fmtP(p.tp[0]), `${pc(p.tp[0])} • 50% बुक करा`, "text-emerald-400")}
-        ${tile("TARGET 2 (2R)", fmtP(p.tp[1]), `${pc(p.tp[1])} • SL entry वर आणा`, "text-emerald-400")}
-        ${tile("TARGET 3 (3R)", fmtP(p.tp[2]), `${pc(p.tp[2])} • बाकी trail करा`, "text-emerald-400")}
-        ${tile("RISK / COIN", fmtP(p.risk), "R:R = 1:1 • 1:2 • 1:3", "text-white")}
-        ${tile("QTY (Coins)", qty ? (qty >= 100 ? fx(qty, 1) : qty.toFixed(4)) : "--", `Risk $${fx(ra)} (${rp}% of $${fx(cap, 0)})`, "text-binance-gold")}
-        ${tile("POSITION VALUE", "$" + fx(pv), cap ? `Leverage ≈ ${fx(pv / cap, 1)}x` : "", "text-white")}
+    body.innerHTML = `
+      <div class="flex items-center justify-between flex-wrap gap-2 mb-2">
+        <div class="text-sm font-extrabold ${dirCls}">
+          ${p.dir === "BUY" ? "🟢 NEW LONG SETUP" : "🔴 NEW SHORT SETUP"} • ${p.tf}
+          <span class="text-xs text-binance-gold ml-1 font-mono">(🤖 Auto-Locking Active)</span>
+        </div>
+        <button id="lockTradeBtn" class="bg-binance-gold hover:bg-binance-goldHover text-black font-extrabold text-xs px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 shadow-md active:scale-95 transition">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          <span>🔒 आता लगेच लॉक करा</span>
+        </button>
       </div>
-      <button id="planFillBtn" class="mt-2 text-[11px] font-extrabold px-3 py-1.5 rounded-lg bg-binance-gold/10 text-binance-gold border border-binance-gold/30 hover:bg-binance-gold/20">🧮 Calculator मध्ये भरा</button>`;
-    $("planFillBtn").onclick = () => {
-      $("calcEntry").value = +e.toPrecision(8); $("calcSl").value = +p.sl.toPrecision(8);
-      $("calcComputeBtn").click(); $("tabCalcBtn").click();
-    };
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        ${tile("ENTRY (Proposed)", fmtP(e), p.zone ? `Pullback: ${fmtP(p.zone[0])} - ${fmtP(p.zone[1])}` : "Market Entry", "text-binance-gold")}
+        ${tile("STOP LOSS", fmtP(p.sl), `${pc(p.sl)} • ${fx(p.risk / p.atr, 1)}×ATR`, "text-rose-400")}
+        ${tile("TARGET 1 (1R)", fmtP(p.tp[0]), `${pc(p.tp[0])} • 1R Target`, "text-emerald-400")}
+        ${tile("TARGET 2 (2R)", fmtP(p.tp[1]), `${pc(p.tp[1])} • 2R Target`, "text-emerald-400")}
+      </div>`;
+
+    const lockBtn = $("lockTradeBtn");
+    if (lockBtn) {
+      lockBtn.onclick = () => {
+        const curSym = $("sym").value.trim().toUpperCase();
+        lockCurrentTrade(p, curSym, false);
+      };
+    }
+    $("planNotes").innerHTML = (f.notes || []).map(n => `<div>${n}</div>`).join("");
   }
-  $("planNotes").innerHTML = (f.notes || []).map(n => `<div>${n}</div>`).join("");
 }
 
-/* ================= RENDER ================= */
+/* ================= ENTRY SL LOG TAB ================= */
+function renderEntrySlLogTable() {
+  const container = $("entrySlLogTable");
+  if (!container) return;
+
+  const total = entrySlLog.length;
+  const wins = entrySlLog.filter(x => x.result.includes("WIN") || x.result.includes("TP")).length;
+  const losses = entrySlLog.filter(x => x.result.includes("SL") || x.result.includes("LOSS")).length;
+  const winRate = total > 0 ? ((wins / total) * 100).toFixed(1) : 0;
+
+  $("statTotalTrades").textContent = total;
+  $("statWins").textContent = wins;
+  $("statLosses").textContent = losses;
+  $("statWinRate").textContent = winRate + "%";
+
+  if (!entrySlLog.length) {
+    container.innerHTML = '<div class="glass-card p-6 text-center text-xs text-binance-muted rounded-xl">कोणताही ट्रेड लॉक केलेला नाही. Trade Plan मधून "Trade Lock करा" दाबा, SL किंवा TP लागल्यावर येथे संपूर्ण निकाल दिसेल.</div>';
+    return;
+  }
+
+  let html = `<table class="w-full text-left border-collapse text-xs font-mono min-w-[700px]">
+    <thead><tr class="text-binance-muted border-b border-binance-cardBorder text-[11px]">
+      <th class="py-2 px-2">वेळ</th>
+      <th class="py-2 px-2">सिम्बॉल</th>
+      <th class="py-2 px-2">TF</th>
+      <th class="py-2 px-2">दिशा</th>
+      <th class="py-2 px-2">Entry Price</th>
+      <th class="py-2 px-2">Exit Price</th>
+      <th class="py-2 px-2">Stop Loss</th>
+      <th class="py-2 px-2">निकाल (Status)</th>
+      <th class="py-2 px-2 text-right">P&L / R:R</th>
+    </tr></thead><tbody class="divide-y divide-binance-cardBorder/40">`;
+
+  entrySlLog.forEach(l => {
+    const dirBadge = l.dir === "BUY" ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30" : "bg-rose-500/15 text-rose-400 border border-rose-500/30";
+    html += `<tr class="hover:bg-binance-cardBg/50">
+      <td class="py-2 px-2 text-binance-muted">${l.time}</td>
+      <td class="py-2 px-2 font-bold text-white">${l.sym}</td>
+      <td class="py-2 px-2 text-gray-300">${l.tf}</td>
+      <td class="py-2 px-2"><span class="px-1.5 py-0.5 rounded text-[10px] font-extrabold ${dirBadge}">${l.dir}</span></td>
+      <td class="py-2 px-2 text-binance-gold font-semibold">$${fmtP(l.entry)}</td>
+      <td class="py-2 px-2 text-white font-semibold">$${fmtP(l.exit)}</td>
+      <td class="py-2 px-2 text-rose-400 font-semibold">$${fmtP(l.sl)}</td>
+      <td class="py-2 px-2 font-extrabold ${l.statusColor || 'text-binance-gold'}">${l.result}</td>
+      <td class="py-2 px-2 text-right font-extrabold ${l.pnl.includes('+') ? 'text-emerald-400' : l.pnl.includes('-') ? 'text-rose-400' : 'text-gray-300'}">${l.pnl}</td>
+    </tr>`;
+  });
+
+  html += `</tbody></table>`;
+  container.innerHTML = html;
+}
+
+$("clearEntrySlLogBtn").onclick = () => {
+  if (confirm("सर्व Entry/SL Trade History डिलीट करायची आहे का?")) {
+    entrySlLog = [];
+    store.set("entrySlLog", entrySlLog);
+    renderEntrySlLogTable();
+    showToast("Entry SL History clear झाली.", "success");
+  }
+};
+
+/* ================= RENDER FINAL & VERDICTS ================= */
 function verdictClass(v) {
   if (String(v).includes("BUY")) return "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40";
   if (String(v).includes("SELL")) return "bg-rose-500/20 text-rose-400 border border-rose-500/40";
@@ -704,7 +1039,7 @@ function renderFinal(f) {
   const col = f.v === "BUY" ? "#0ECB81" : f.v === "SELL" ? "#F6465D" : "#F0B90B";
   const box = $("verdictBanner"); box.classList.remove("hidden"); box.style.borderLeftColor = col;
   const t = $("fvText"); t.textContent = f.label;
-  t.className = `text-xl sm:text-3xl font-black font-mono px-2.5 py-0.5 rounded-lg uppercase ${verdictClass(f.v)}`;
+  t.className = `text-lg sm:text-2xl font-black font-mono px-2 py-0.5 rounded-lg uppercase ${verdictClass(f.v)}`;
   $("fvScore").textContent = `Score ${f.score > 0 ? "+" : ""}${f.score}`;
   const cf = $("fvConfirm");
   if (f.v === "WAIT") { cf.className = "hidden"; }
@@ -713,7 +1048,7 @@ function renderFinal(f) {
   const bar = $("fvBar"), a = Math.min(100, Math.abs(f.score));
   bar.style.width = (a / 2) + "%"; bar.style.left = f.score >= 0 ? "50%" : (50 - a / 2) + "%"; bar.style.background = col;
 
-  const plan = computePlan(f, lastD);
+  const plan = computePlan(f, lastD, $("ttfSel").value);
   lastPlan = plan && plan.dir !== "WAIT" ? plan : null;
   renderPlan(f, plan);
   chDrawPlan();
@@ -805,22 +1140,34 @@ async function runOnce(n, A, my) {
   showLTP(d.px, sym); show24h(t24);
   $("marketBadge").textContent = A.fa ? "FUTURES" : "SPOT";
 
-  const [ov, owhy, oconf] = verdictOld(d), [nv, nwhy, nconf] = verdictNew(d);
-  setVerdictBox("ov", ov, owhy, oconf);
+  const [nv, nwhy, nconf] = verdictNew(d);
   setVerdictBox("nv", nv, nwhy, nconf);
 
-  // Theme + browser tab follow NEW SIGNAL only. FINAL calculation remains unchanged.
   const themeSignal = nv === "BUY" || nv === "SELL" ? nv : "NEUTRAL";
   applySignalTheme(themeSignal);
-  updateTabTitleAndFavicon(themeSignal, `NEW SIGNAL ${themeSignal}`, d.px, sym);
+  updateTabTitleAndFavicon(themeSignal, `NEW ${themeSignal}`, d.px, sym);
 
   const f = applyConfirm(computeFinal(d), true);
   renderFinal(f);
 
+  // Auto-Lock Check: System automatically locks the trade if BUY or SELL setup triggers based on NEW Signal
+  const autoLockOn = $("autoLockToggle") ? $("autoLockToggle").checked : true;
+  if (autoLockOn && (!lockedTrade || lockedTrade.status !== "OPEN")) {
+    const timeSinceLastClose = Date.now() - lastClosedTime;
+    if ((f.v === "BUY" || f.v === "SELL") && timeSinceLastClose > 6000) {
+      const plan = computePlan(f, d, $("ttfSel").value);
+      if (plan && plan.dir !== "WAIT") {
+        lockCurrentTrade(plan, sym, true);
+        renderPlan(f, plan);
+      }
+    }
+  }
+
   $("out").innerHTML = table("FUTURES (USDT-M)", A.fs, A.fa, d.fm, d.fob) + table("SPOT", A.ss, A.sa, d.sm, d.sob);
   $("obVisualBox").innerHTML = renderObVisual(d.fob || d.sob);
 
-  onVerdict(ov, nv, f, d.px, sym);
+  onVerdict(nv, f, d.px, sym);
+  if (chBuilt) chRefresh();
 }
 
 function saveSet() { ["sym", "quote", "rep", "cyc"].forEach(k => store.set(k, $(k).value)); }
@@ -862,31 +1209,31 @@ function alertNow(dir) {
 }
 async function wake() { try { if (navigator.wakeLock) wl = await navigator.wakeLock.request("screen"); } catch (e) {} }
 
-/* ================= LOG ================= */
+/* ================= SIGNAL HISTORY LOG (NEW & FINAL) ================= */
 function clearSignalLog() {
   if (!confirm("सर्व Signal History खरंच clear करायची आहे का?")) return;
   logArr = []; store.set("log3", logArr); renderLog(); showToast("Signal History clear झाली.", "success");
 }
 function renderLog() {
-  const cols = "grid grid-cols-[70px_90px_1fr_1fr_1.3fr_90px] gap-2";
+  const cols = "grid grid-cols-[80px_100px_1fr_1.3fr_90px] gap-2";
   const head = `<div class="${cols} text-[10px] font-bold text-binance-muted uppercase pb-1 border-b border-binance-cardBorder">
-    <span>वेळ</span><span>Symbol</span><span class="text-center">OLD</span><span class="text-center">NEW</span><span class="text-center">FINAL</span><span class="text-right">Price</span></div>`;
+    <span>वेळ</span><span>Symbol</span><span class="text-center">NEW SIGNAL</span><span class="text-center">FINAL ACTION</span><span class="text-right">Price</span></div>`;
   const cell = (a, b) => `<span class="text-center px-1.5 py-0.5 rounded text-[10px] font-extrabold border ${badgeStyle(b)}">${a} ➔ ${b}</span>`;
   const rows = logArr.length ? logArr.map(l => `<div class="${cols} items-center text-xs py-1.5 border-b border-binance-cardBorder/40 font-mono">
       <span class="text-binance-muted">${l.t}</span><span class="font-bold text-white">${l.sym}</span>
-      ${cell(l.of, l.ot)}${cell(l.nf, l.nt)}${cell(l.ff || "-", l.ft || "-")}
+      ${cell(l.nf, l.nt)}${cell(l.ff || "-", l.ft || "-")}
       <span class="text-binance-gold font-bold text-right">${l.px ? "$" + fmtP(l.px) : "-"}</span></div>`).join("")
     : '<div class="text-xs text-binance-muted py-2">अजून लॉग उपलब्ध नाही.</div>';
   $("log").innerHTML = `<div class="flex items-center justify-between mb-2">
-      <h3 class="text-xs font-bold text-binance-gold uppercase tracking-wider">📜 Signal History (OLD | NEW | FINAL)</h3>
+      <h3 class="text-xs font-bold text-binance-gold uppercase tracking-wider">📜 Signal History (NEW | FINAL)</h3>
       <button onclick="clearSignalLog()" class="text-[11px] font-extrabold px-2.5 py-1 rounded-lg bg-rose-500/10 text-rose-400 border border-rose-500/30 hover:bg-rose-500/20">🗑 CLEAR LOG</button>
     </div>` + head + rows;
 }
 
-function onVerdict(ov, nv, f, px, sym) {
-  const oldCh = prevOV !== null && ov !== prevOV, newCh = prevNV !== null && nv !== prevNV, finCh = prevFV !== null && f.label !== prevFV;
-  if (oldCh || newCh || finCh) {
-    logArr.unshift({ t: new Date().toLocaleTimeString("en-IN"), sym, of: prevOV ?? "-", ot: ov, nf: prevNV ?? "-", nt: nv, ff: prevFV ?? "-", ft: f.label, px });
+function onVerdict(nv, f, px, sym) {
+  const newCh = prevNV !== null && nv !== prevNV, finCh = prevFV !== null && f.label !== prevFV;
+  if (newCh || finCh) {
+    logArr.unshift({ t: new Date().toLocaleTimeString("en-IN"), sym, nf: prevNV ?? "-", nt: nv, ff: prevFV ?? "-", ft: f.label, px });
     logArr = logArr.slice(0, 80); store.set("log3", logArr); renderLog();
   }
   if (f.justConfirmed) {
@@ -894,12 +1241,13 @@ function onVerdict(ov, nv, f, px, sym) {
     const pl = lastPlan ? ` <br>Entry ${fmtP(lastPlan.entry)} • SL ${fmtP(lastPlan.sl)} • TP1 ${fmtP(lastPlan.tp[0])}` : "";
     showToast(`🎯 CONFIRMED: <b>${sym}</b> वर <b>${f.label}</b>${pl}`, f.v === "BUY" ? "success" : "error");
   }
-  prevOV = ov; prevNV = nv; prevFV = f.label;
+  prevNV = nv; prevFV = f.label;
 }
 
+/* ================= SCAN LOOP ================= */
 async function loop() {
   const my = ++token; running = true;
-  prevOV = null; prevNV = null; prevFV = null; prevLTP = null; prevLTPSym = null;
+  prevNV = null; prevFV = null; prevLTP = null; prevLTPSym = null;
   lastA = null; lastD = null; lastF = null; lastPlan = null; fState = { v:null, count:0 };
   $("planCard").classList.add("hidden"); $("verdictBanner").classList.add("hidden");
   renderChips(); wake();
@@ -930,8 +1278,27 @@ async function loop() {
   if (my === token) { $("status").textContent = running ? "🏁 सर्व Runs पूर्ण." : "🛑 थांबवले."; running = false; }
 }
 
-/* ================= EVENTS ================= */
-$("go").onclick = () => { saveSet(); unlockAudio(); loop(); };
+/* ================= EVENT HANDLERS ================= */
+// Search Toggle Button: Toggles the control panel
+$("searchToggleBtn").onclick = () => {
+  const panel = $("controlPanel");
+  panel.classList.toggle("hidden");
+  if (!panel.classList.contains("hidden")) {
+    $("sym").focus();
+  }
+};
+$("closeControlBtn").onclick = () => {
+  $("controlPanel").classList.add("hidden");
+};
+
+// Start button: Starts scan and AUTO-HIDES the control panel for a super clean view
+$("go").onclick = () => {
+  saveSet();
+  unlockAudio();
+  $("controlPanel").classList.add("hidden"); // Auto hide panel as requested
+  loop();
+};
+
 $("stop").onclick = () => { running = false; $("status").textContent = "🛑 स्कॅनर थांबवला."; };
 $("add").onclick = () => {
   const s = $("sym").value.trim().toUpperCase();
@@ -953,17 +1320,29 @@ $("saveSettings").onclick = () => {
   setTimeout(() => { closeSettings(); if (running) loop(); }, 500);
 };
 
-/* Trade TF बदलला तर लगेच नवा plan */
-$("ttfSel").value = store.get("ttf", "1h");
+// Trade TF Dropdown change
+$("ttfSel").value = store.get("ttf", "5m");
 $("ttfSel").onchange = () => {
   store.set("ttf", $("ttfSel").value);
   if (lastD) renderFinal(applyConfirm(computeFinal(lastD), false));
 };
-/* Capital / Risk लक्षात ठेवा + plan qty अपडेट */
-["calcCap", "calcRiskPct"].forEach(k => {
-  $(k).value = store.get(k, $(k).value);
-  $(k).addEventListener("change", () => { store.set(k, $(k).value); if (lastF) renderPlan(lastF, computePlan(lastF, lastD)); });
-});
+
+if ($("targetExitSel")) {
+  $("targetExitSel").value = store.get("targetExit", "TP1");
+  $("targetExitSel").onchange = () => store.set("targetExit", $("targetExitSel").value);
+}
+if ($("autoLockToggle")) {
+  $("autoLockToggle").checked = store.get("autoLock", true);
+  $("autoLockToggle").onchange = () => store.set("autoLock", $("autoLockToggle").checked);
+}
+
+if ($("manualExitBtn")) {
+  $("manualExitBtn").onclick = () => {
+    if (confirm("हा ट्रेड मॅन्युअली Close करायचा आहे का?")) {
+      unlockOrCloseTrade("MANUAL_EXIT");
+    }
+  };
+}
 
 /* ================= LIVE CHARTS ================= */
 const CH_TFS = ["1m", "5m", "1h", "4h"], CH_IST = 19800, chObj = {};
@@ -978,7 +1357,7 @@ function ensureCharts() {
   CH_TFS.forEach(tf => {
     const card = document.createElement("div");
     card.className = "glass-card rounded-xl p-2 space-y-1";
-    card.innerHTML = `<div class="flex items-center justify-between px-1"><span class="text-xs font-extrabold text-binance-gold font-mono">${tf.toUpperCase()}</span><span id="chInfo_${tf}" class="text-[10px] font-mono text-binance-muted">--</span></div><div id="chBox_${tf}" style="height:300px"></div>`;
+    card.innerHTML = `<div class="flex items-center justify-between px-1"><span class="text-xs font-extrabold text-binance-gold font-mono">${tf.toUpperCase()}</span><span id="chInfo_${tf}" class="text-[10px] font-mono text-binance-muted">--</span></div><div id="chBox_${tf}" style="height:280px"></div>`;
     grid.appendChild(card);
     const chart = LightweightCharts.createChart(card.querySelector("#chBox_" + tf), {
       autoSize: true, layout: { background: { color: "transparent" }, textColor: "#848E9C" },
@@ -998,13 +1377,20 @@ function chLegend() {
 }
 function chDrawPlan() {
   if (!chBuilt) return;
+  const planToDraw = lockedTrade || lastPlan;
   CH_TFS.forEach(tf => {
     const o = chObj[tf]; if (!o) return;
     o.pl.forEach(l => { try { o.candle.removePriceLine(l); } catch (e) {} }); o.pl = [];
-    if (!lastPlan) return;
+    if (!planToDraw) return;
     const add = (price, color, title) => o.pl.push(o.candle.createPriceLine({ price, color, lineWidth: 1, lineStyle: 2, axisLabelVisible: true, title }));
-    add(lastPlan.entry, "#F0B90B", "ENTRY"); add(lastPlan.sl, "#F6465D", "SL");
-    lastPlan.tp.forEach((p, i) => add(p, "#0ECB81", "TP" + (i + 1)));
+    add(planToDraw.entry, "#F0B90B", "ENTRY"); add(planToDraw.sl, "#F6465D", "SL");
+    if (planToDraw.tp && Array.isArray(planToDraw.tp)) {
+      planToDraw.tp.forEach((p, i) => add(p, "#0ECB81", "TP" + (i + 1)));
+    } else if (planToDraw.tp1) {
+      add(planToDraw.tp1, "#0ECB81", "TP1");
+      if (planToDraw.tp2) add(planToDraw.tp2, "#0ECB81", "TP2");
+      if (planToDraw.tp3) add(planToDraw.tp3, "#0ECB81", "TP3");
+    }
   });
 }
 async function chLoad(tf, t, first) {
@@ -1030,51 +1416,49 @@ async function chRefresh() {
   if (chBusy) return;
   const t = chTarget(), msg = $("chartMsg");
   if (!t) { msg.textContent = "आधी 'स्कॅन सुरू करा' दाबा."; return; }
-  if (!ensureCharts()) { msg.textContent = "❌ Chart library लोड झाली नाही (इंटरनेट तपासा)."; return; }
+  if (!ensureCharts()) { msg.textContent = "❌ Chart library लोड झाली नाही."; return; }
   chLegend(); $("chartSym").textContent = `${t.s} · ${t.label}`;
   const key = t.m + t.s + [C.EF, C.EM, C.ES].join("-"), first = key !== chKey;
   chBusy = true;
   try { await Promise.all(CH_TFS.map(tf => chLoad(tf, t, first))); chKey = key; chDrawPlan(); msg.textContent = "● Live (दर 5s ला अपडेट)"; }
-  catch (e) { msg.textContent = "❌ डेटा मिळाला नाही, पुन्हा प्रयत्न करत आहे..."; }
+  catch (e) { msg.textContent = "डेटा रिफ्रेश होत आहे..."; }
   finally { chBusy = false; }
 }
 function chartsShow() { chRefresh(); clearInterval(chTimer); chTimer = setInterval(chRefresh, 5000); }
 function chartsHide() { clearInterval(chTimer); chTimer = null; }
 
-/* ================= TABS ================= */
+/* ================= TABS REORDERED ================= */
 const tabs = [
-  { btn:"tabMtfBtn", content:"tabMtf" }, { btn:"tabChartsBtn", content:"tabCharts" }, { btn:"tabObBtn", content:"tabOb" },
-  { btn:"tabCalcBtn", content:"tabCalc" }, { btn:"tabLogBtn", content:"tabLog" }
+  { btn:"tabChartsBtn", content:"tabCharts" },
+  { btn:"tabMtfBtn", content:"tabMtf" },
+  { btn:"tabObBtn", content:"tabOb" },
+  { btn:"tabEntrySlLogBtn", content:"tabEntrySlLog" },
+  { btn:"tabLogBtn", content:"tabLog" }
 ];
 tabs.forEach(t => {
   $(t.btn).onclick = () => {
-    tabs.forEach(x => { $(x.content).classList.add("hidden"); $(x.btn).className = "tab-btn px-4 py-2.5 text-binance-muted hover:text-white font-medium whitespace-nowrap"; });
+    tabs.forEach(x => {
+      $(x.content).classList.add("hidden");
+      $(x.btn).className = "tab-btn px-4 py-2.5 text-binance-muted hover:text-white font-medium whitespace-nowrap";
+    });
     $(t.content).classList.remove("hidden");
     if (t.content === "tabCharts") chartsShow(); else chartsHide();
+    if (t.content === "tabEntrySlLog") renderEntrySlLogTable();
     if (t.content === "tabLog") renderLog();
     $(t.btn).className = "tab-btn px-4 py-2.5 text-binance-gold border-b-2 border-binance-gold font-extrabold whitespace-nowrap";
   };
 });
 
-/* ================= CALCULATOR ================= */
-$("calcComputeBtn").onclick = () => {
-  const cap = +$("calcCap").value || 0, riskPct = +$("calcRiskPct").value || 0, entry = +$("calcEntry").value || 0, sl = +$("calcSl").value || 0;
-  if (!cap || !entry || !sl || entry === sl) { showToast("कृपया योग्य Entry आणि Stop Loss टाका.", "error"); return; }
-  const riskAmt = cap * (riskPct / 100), coins = riskAmt / Math.abs(entry - sl), totalVal = coins * entry;
-  $("calcRiskAmt").textContent = "$" + fx(riskAmt);
-  $("calcCoinQty").textContent = coins >= 100 ? fx(coins, 1) : coins.toFixed(4);
-  $("calcTotalVal").textContent = "$" + fx(totalVal);
-  $("calcLev").textContent = fx(totalVal / cap, 1) + "x";
-  $("calcOut").classList.remove("hidden");
-};
-
-/* ================= LIVE LTP (1 सेकंद) ================= */
+/* ================= 1-SEC LTP POLLING & TRADE MONITOR ================= */
 let ltpBusy = false;
 setInterval(async () => {
   if (!running || !lastA || ltpBusy) return;
   const A = lastA, m = A.fa ? "futures" : "spot", sym = A.fa ? A.fs : A.ss;
   ltpBusy = true;
-  try { const d = await jget(base(m) + "ticker/price?symbol=" + sym); if (running && lastA === A) showLTP(+d.price, sym); } catch (e) {}
+  try {
+    const d = await jget(base(m) + "ticker/price?symbol=" + sym);
+    if (running && lastA === A) showLTP(+d.price, sym);
+  } catch (e) {}
   ltpBusy = false;
 }, 1000);
 
@@ -1084,6 +1468,9 @@ document.addEventListener("visibilitychange", () => { if (document.visibilitySta
 loadSet();
 renderChips();
 renderLog();
+renderEntrySlLogTable();
+updateLockedTradeUI();
+chartsShow(); // Live Charts is active first tab
 </script>
 </body>
 </html>
